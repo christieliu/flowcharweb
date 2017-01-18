@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<link href="css/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
+	<link href="css/bootstrap-3.3.5/css/font-awesome.css" rel="stylesheet"/>
+	<link href="css/main.css" rel="stylesheet">
+	<link href="css/jsPlumbToolkit-defaults.css" rel="stylesheet">
+	<link href="css/jsPlumbToolkit-demo.css" rel="stylesheet">
+    <script src="js/jquery-1.12.3.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/jsPlumb-2.0.7.js"></script>
+    <style type="text/css">
+		.process-step {
+		    position: absolute;
+		    background-color: #234b5e;
+		    border-radius: 11px;
+		    color: #f7ebca;
+		    cursor: move;
+		    margin-bottom: 10px;
+		    margin-left: 6px;
+		    padding: 8px;
+		    width: 128px;
+		    min-height:40px;
+		}
+       .process-step span{
+       		cursor : pointer
+       }
+       .aLabel{
+       	   
+       }
+	   .btnsmall {
+		    -moz-user-select: none;
+		    background-image: none;
+		    border: 1px solid transparent;
+		    border-radius: 2px;
+		    cursor: pointer;
+		    display: inline-block;
+		    line-height: 1.42857;
+		    margin-bottom: 0;
+		    padding: 2px 4px;
+		    text-align: center;
+		    vertical-align: middle;
+		    white-space: nowrap;
+		}
+		.properTable{
+			font-size : 12px;
+		}
+		.btndownmenu {
+		    -moz-user-select: none;
+		    background-image: none;
+		    border: 1px solid #ccc;
+		    border-radius: 2px;
+		    cursor: pointer;
+		    display: inline-block;
+		    line-height: 1.42857;
+		    margin-bottom: 0;
+		    padding: 4px 6px;
+		    text-align: center;
+		    vertical-align: middle;
+		    white-space: nowrap;
+		    width:100%
+		}
+		.form-control-small {
+		    background-color: #fff;
+		    background-image: none;
+		    border: 1px solid #ccc;
+		    border-radius: 4px;
+		    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset;
+		    color: #555;
+		    display: block;
+		    height: 24px;
+		    line-height: 1.42857;
+		    padding: 2px 4px;
+		    transition: border-color 0.15s ease-in-out 0s, box-shadow 0.15s ease-in-out 0s;
+		    width: 100%;
+		}		
+    </style>
+
+    <script>
+	    var defaults = {
+	    	      processData:{},//步骤节点数据
+	    	      //processUrl:'',//步骤节点数据
+	    	      fnRepeat:function(){
+	    	        alert("步骤连接重复");
+	    	      },
+	    	      fnClick:function(){
+	    	        alert("单击");
+	    	      },
+	    	      fnDbClick:function(){
+	    	        alert("双击");
+	    	      },
+	    	      canvasMenus : {
+	    	        "one": function(t) {alert('画面右键')}
+	    	      },
+	    	      processMenus: {
+	    	        "one": function(t) {alert('步骤右键')}
+	    	      },
+	    	      /*右键菜单样式*/
+	    	      menuStyle: {
+	    	        border: '1px solid #5a6377',
+	    	        minWidth:'150px',
+	    	        padding:'5px 0'
+	    	      },
+	    	      itemStyle: {
+	    	        fontFamily : 'verdana',
+	    	        color: '#333',
+	    	        border: '0',
+	    	        /*borderLeft:'5px solid #fff',*/
+	    	        padding:'5px 40px 5px 20px'
+	    	      },
+	    	      itemHoverStyle: {
+	    	        border: '0',
+	    	        /*borderLeft:'5px solid #49afcd',*/
+	    	        color: '#fff',
+	    	        backgroundColor: '#5a6377'
+	    	      },
+	    	      mtAfterDrop:function(params){
+	    	          //alert('连接成功后调用');
+	    	          //alert("连接："+params.sourceId +" -> "+ params.targetId);
+	    	      },
+	    	      //这是连接线路的绘画样式
+	    	      connectorPaintStyle : {
+	    	          lineWidth:3,
+	    	          strokeStyle:"#49afcd",
+	    	          joinstyle:"round"
+	    	      },
+	    	      //鼠标经过样式
+	    	      connectorHoverStyle : {
+	    	          lineWidth:3,
+	    	          strokeStyle:"#da4f49"
+	    	      }
+	
+	    	   };/*defaults end*/    
+	    jsPlumb.ready(function(){
+	    	var mainElement = document.querySelector("#jtk-demo-flowchart"),
+	    	canvasElement = mainElement.querySelector(".jtk-demo-canvas"),
+	        miniviewElement = mainElement.querySelector(".miniview"),
+	        nodePalette = mainElement.querySelector(".node-palette"),
+	        controls = mainElement.querySelector(".controls");
+	    	var nodePalette = mainElement.querySelector(".node-palette");
+	    	//var cavasSurface= canvasElement.querySelector(".jtk-surface-canvas");
+	    	//创建一个辅助的surface div;
+	    	var cavasSurface = document.createElement("div");
+	    	cavasSurface.style.top = "0px";
+	    	cavasSurface.style.left = "0px";
+	    	cavasSurface.style.width = "50px";
+	    	cavasSurface.style.height = "50px";
+	    	cavasSurface.style.position = "relative";
+	    	cavasSurface.classname = "jtk-surface-canvas";
+	    	jsPlumb.appendElement(cavasSurface, canvasElement);
+	    	jsPlumb.importDefaults({
+	            DragOptions : { cursor: 'pointer'},
+	            EndpointStyle : { fillStyle:'#225588' },
+	            Endpoint : [ "Dot", {radius:1} ],
+	            ConnectionOverlays : [
+	                [ "Arrow", { location:1 } ],
+	                [ "Label", {
+	                        location:0.5,
+	                        id:"label",
+	                        cssClass:"aLabel"
+	                    }]
+	            ],
+	            Anchor : 'Continuous',
+	            ConnectorZIndex:5,
+	            HoverPaintStyle:defaults.connectorHoverStyle,
+	            Container : cavasSurface
+	        });    	
+	    	var h, isdowned = false;
+	    	$(canvasElement).bind("mousedown", function(event){
+	    		isdowned = true;
+	    		h = [event.pageX, event.pageY];
+	    	});
+	    	$(canvasElement).bind("mousemove", function(event){
+	    		if(isdowned){
+	    			var dx = event.pageX - h[0];
+	    			var dy = event.pageY - h[1];
+	    			cavasSurface.style.top = (parseInt(cavasSurface.style.top.split("px")[0]) + dy) + "px";
+	    			cavasSurface.style.left = (parseInt(cavasSurface.style.left.split("px")[0]) + dx) + "px";
+	    			h = [event.pageX, event.pageY];
+	    		}
+	    	});
+	    	$(canvasElement).bind("mouseup", function(event){
+	    		isdowned = false; h = null;
+	    	})
+	    	var r = "helloworld";
+	    	var connecionMappings = {};
+	    	var nodeIds = 0, lineId = 0;
+	    	var options = {
+		        dragOptions: {
+		            zIndex: 50000,
+		            cursor: "move",
+		            clone: true,
+		            scope : r,
+		            ignoreZoom : !0, 
+		            doNotRemoveHelper : !0
+		        },
+		        typeExtractor: function (el) {
+		            return el.getAttribute("jtk-node-type");
+		        },
+		        dataGenerator: function (type) {
+		            return {
+		                w:120,
+		                h:80
+		            };
+		        }, 
+		        dropOptions : {
+			    	scope : r,
+			    	drop : function(event){
+			    		/**增加一个节点**/
+			    		var nodeDiv = document.createElement("div");
+			    		var g = jsPlumb.getDragObject(arguments),
+	                    h = jsPlumb.getOffset(g);
+			    		console.log("h.x:" + h.left +":h.y" + h.top );
+			    		console.log("h.offsetLeft:" + g.offsetLeft +":h.offsetTop" + g.offsetTop );
+			    		console.log("w:" + jsPlumb.getWidth(event.drag.el));
+			    		//h = {left : g.offsetLeft, top : g.offsetTop};
+	                     //i = mapLocation(h.left, h.top, 1);
+	                    var nodeId = new Date().getTime();
+	                    var i = jsPlumb.getOffset(canvasElement);
+	                    var j = jsPlumb.getOffset(cavasSurface);
+			    		$(nodeDiv).attr("style", "left:" + (h.left - i.left - j.left) +　"px;top:" + (h.top - i.top - j.top ) + "px");
+			    		$(nodeDiv).attr("id", "nodeId" + nodeId);
+			    		$(nodeDiv).addClass("process-step").addClass("btn").addClass("btn-small");
+			    		cavasSurface.appendChild(nodeDiv);
+			    		var span = "<span  class=\"badge badge-inverse\"><i class=\"icon-star icon-white\">节点" + (++nodeIds) + "</i></span>";
+			    		$(nodeDiv).append(span);
+			    		var spanStart = $(nodeDiv).find("span").eq(0);
+			            jsPlumb.makeSource(spanStart, {
+			                parent : nodeDiv, 
+			                anchor:"Continuous",
+			                endpoint:[ "Dot", { radius:1 } ],
+			                connector:[ "Flowchart", { stub:[5, 5] } ],
+			                connectorStyle:defaults.connectorPaintStyle,
+			                hoverPaintStyle:defaults.connectorHoverStyle,
+			                dragOptions:{},
+			                scope : "helloworld",
+			                maxConnections:-1
+			            });
+			            $(nodeDiv).bind("dblclick", function(){
+			            	//
+			            	jsPlumb.remove(this);
+			            })
+	  		            jsPlumb.makeTarget(nodeDiv, {
+			                dropOptions:{ hoverClass:"hover", activeClass:"active"},
+			                anchor:"Continuous",
+			                maxConnections:-1,
+			                endpoint:[ "Dot", { radius:1 } ],
+			                paintStyle:{ fillStyle:"#ec912a",radius:1 },
+			                hoverPaintStyle:this.connectorHoverStyle,
+			                scope : "helloworld" ,
+			                beforeDrop:function(params){
+			                	if(!connecionMappings[params["sourceId"]]){
+			                		connecionMappings[params["sourceId"]] = [];
+			                	}
+			                	var targetIds =  connecionMappings[params["sourceId"]];
+			                	if(targetIds && targetIds.length > 0){
+			                		for(var i = 0 ; i < targetIds.length; i++){
+			                			if(targetIds[i] == params["targetId"]){
+			                				alert("不能重复连接");
+			                				return false;
+			                			}
+			                		}
+			                	}		                	
+			                	targetIds.push(params["targetId"]);
+			                	var conn = params["connection"];
+			                	conn.setLabel("连接" + ( ++lineId));
+			                	params["connection"].bind("click", function(){
+			                		console.log(" connection click! ");
+			                	}).bind("dblclick", function(event){
+			                		jsPlumb.detach(this);
+			                	})
+			                	return true;
+			                }
+			            });	
+			    		jsPlumb.draggable(nodeDiv, {cursor : "move"});  		
+			    	}	
+			    }
+	    	};
+	    	
+	    	jsPlumb.initDraggable(document.getElementById("btnadd"), options.dragOptions, 'surfaceNodeDrag');
+	    	jsPlumb.initDroppable(canvasElement, options.dropOptions, 'surfaceNodeDrag');
+	    });	
+
+    	   $(function(){
+    			$('.dropdown-toggle').dropdown();
+    	   })
+	
+    </script>
+</head>
+
+<body>
+	<nav class="navbar navbar-default">
+	  <div class="container-fluid">
+	  	<span id="btnsave" class="btn btn-primary btn-default navbar-btn" jtk-node-type="question" ><i class="icon-save"></i> 保 存</span>
+	  	<span id="btnreset" class="btn btn-primary btn-default navbar-btn" jtk-node-type="question" ><i class="icon-refresh"></i> 重 置</span>
+	  	<span id="btnadd" class="btn btn-primary btn-default navbar-btn" jtk-node-type="question" title="请拖放到主区域"><i class="icon-plus-sign"></i>增加节点</span>
+	  </div>
+	</nav>
+	<div class="container-fluid">
+	 		<div class="jtk-demo-main" id="jtk-demo-flowchart">
+	            <!-- the node palette -->
+	            <div class="sidebar">
+	            	<div class="panel panel-default" style="height:550px">
+		            	<div class="panel-heading">属性设置</div>
+		                <table class="table table-hover table-bordered table-condensed properTable">
+							  <tbody>
+							 	<tr>
+							 		<td class="col-sm-4">名称</td>
+							 		<td class="col-sm-8">
+							 		<div class="input-group" style="width:100%">
+								      <div style="width:100%;display:table-cell;margin-right:20px;">
+								      	aaaaaa
+								      </div>
+								      <div style="width:20px;display:table-cell"><button class="btnsmall btn-info"><span class="icon-search"></span></button></div>
+								    </div>
+    							</td>
+							 	</tr> 
+							 	<tr>
+							 		<td>名称</td>
+							 		<td><input type="text" class="form-control-small" ></td>
+							 	</tr> 
+							 	<tr>
+							 		<td>名称</td>
+							 		<td>
+							 			<select class="form-control-small">
+									         <option>1</option>
+									         <option>2</option>
+									         <option>3</option>
+									         <option>4</option>
+									         <option>5</option>
+									    </select>
+							 		</td>
+							 	</tr> 
+							 	<tr>
+							 		<td>名称</td>
+							 		<td>node</td>
+							 	</tr> 
+							 	<tr>
+							 		<td>名称</td>
+							 		<td>node</td>
+							 	</tr> 
+							 	<tr>
+							 		<td>名称</td>
+							 		<td>node</td>
+							 	</tr> 
+							 	<tr>
+							 		<td>名称</td>
+							 		<td>node</td>
+							 	</tr> 
+							 	<tr>
+							 		<td>名称</td>
+							 		<td>node</td>
+							 	</tr> 
+							  </tbody>
+							</table>
+						<div style="width:100%;border-top:1px solid #ddd"></div>
+					</div>
+	             </div>
+	
+	            <!-- this is the main drawing area -->
+	            <div class="jtk-demo-canvas jtk-surface">
+	                <!-- miniview -->
+	                <div class="miniview"></div>
+	            </div>	
+	       </div>
+    </div>
+</body>
+
+
+</html>
