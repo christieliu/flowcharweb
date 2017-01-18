@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<link href="css/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
+	<link href="css/bootstrap-3.3.5/css/font-awesome.css" rel="stylesheet"/>
+	<link href="css/main.css" rel="stylesheet">
+	<link href="css/jsPlumbToolkit-defaults.css" rel="stylesheet">
+	<link href="css/jsPlumbToolkit-demo.css" rel="stylesheet">
+    <script src="js/jquery-1.12.3.min.js"></script>
+    <!-- <script src="js/bootstrap.min.js"></script> -->
+    <script src="js/jsPlumb-2.0.7.js?t=80122"></script>
+    <script src="js/jquery.contextmenu.r2.js"></script>
+    <style type="text/css">
+		.process-step {
+		    position: absolute;
+		    background-color: #234b5e;
+		    border-radius: 11px;
+		    color: #f7ebca;
+		    cursor: move;
+		    margin-bottom: 10px;
+		    margin-left: 6px;
+		    padding: 8px;
+		    width: 128px;
+		    min-height:40px;
+		}
+       .process-step span{
+       		cursor : pointer
+       }
+       .aLabel{
+       	   
+       }
+	   .btnsmall {
+		    -moz-user-select: none;
+		    background-image: none;
+		    border: 1px solid transparent;
+		    border-radius: 2px;
+		    cursor: pointer;
+		    display: inline-block;
+		    line-height: 1.42857;
+		    margin-bottom: 0;
+		    padding: 2px 4px;
+		    text-align: center;
+		    vertical-align: middle;
+		    white-space: nowrap;
+		}
+		.properTable{
+			font-size : 12px;
+		}
+		.btndownmenu {
+		    -moz-user-select: none;
+		    background-image: none;
+		    border: 1px solid #ccc;
+		    border-radius: 2px;
+		    cursor: pointer;
+		    display: inline-block;
+		    line-height: 1.42857;
+		    margin-bottom: 0;
+		    padding: 4px 6px;
+		    text-align: center;
+		    vertical-align: middle;
+		    white-space: nowrap;
+		    width:100%
+		}
+		.form-control-small {
+		    background-color: #fff;
+		    background-image: none;
+		    border: 1px solid #ccc;
+		    border-radius: 4px;
+		    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset;
+		    color: #555;
+		    display: block;
+		    height: 24px;
+		    line-height: 1.42857;
+		    padding: 2px 4px;
+		    transition: border-color 0.15s ease-in-out 0s, box-shadow 0.15s ease-in-out 0s;
+		    width: 100%;
+		}	
+		
+		.ctrlElement{
+			border : 1px solid #000;
+			background-color : gray;
+			position: absolute;
+		    color: #f7ebca;
+		    cursor: move;
+		    width: 80px;
+		    height:40px;
+		}	
+		
+		.tableElement{
+		    color: #f7ebca;
+		    cursor: move;
+		    width: 300px;
+		    height:150px;
+		    position: absolute;
+		}
+		
+		.tableElement table{
+			width : 100%;
+			height : 100%;
+			border-collapse:collapse;
+			border : 1px solid #000;
+		}
+		.tableElement table td{
+			border : 1px solid #000;
+			-webkit-user-select: none;
+			-moz-user-select: none; /* for Firefox */
+		}
+		.contextMenu{
+		}
+    </style>
+
+    <script>
+	    var iev = (function() {
+	        var rv = -1;
+	        if (navigator.appName == 'Microsoft Internet Explorer') {
+	            var ua = navigator.userAgent,
+	                re = new RegExp("MSIE ([0-9]{1,}[\.0-9]{0,})");
+	            if (re.exec(ua) != null)
+	                rv = parseFloat(RegExp.$1);
+	        }
+	        return rv;
+	    })(),
+	    isIELT9 = iev > -1 && iev < 9,
+	    isIE9 = iev == 9,
+	    _pl = function(e) {
+	        if (isIELT9) {
+	            return [ e.clientX + document.documentElement.scrollLeft, e.clientY + document.documentElement.scrollTop ];
+	        }
+	        else {
+	            var ts = _touches(e), t = _getTouch(ts, 0);
+	            // for IE9 pageX might be null if the event was synthesized. We try for pageX/pageY first,
+	            // falling back to clientX/clientY if necessary. In every other browser we want to use pageX/pageY.
+	            return isIE9 ? [t.pageX || t.clientX, t.pageY || t.clientY] : [t.pageX, t.pageY];
+	        }
+	    },
+	    _getTouch = function(touches, idx) { return touches.item ? touches.item(idx) : touches[idx]; },
+	    _touches = function(e) {
+	        return e.touches && e.touches.length > 0 ? e.touches :
+	                e.changedTouches && e.changedTouches.length > 0 ? e.changedTouches :
+	                e.targetTouches && e.targetTouches.length > 0 ? e.targetTouches :
+	            [ e ];
+	    },
+	    _pllocal = function(e){
+	    	return { "x" : e.offsetX, "y" : e.offsetY};
+	    };   
+	    var defaults = {
+	    	      //这是连接线路的绘画样式
+	    	      connectorPaintStyle : {
+	    	          lineWidth:3,
+	    	          strokeStyle:"#49afcd",
+	    	          joinstyle:"round"
+	    	      },
+	    	      //鼠标经过样式
+	    	      connectorHoverStyle : {
+	    	          lineWidth:3,
+	    	          strokeStyle:"#da4f49"
+	    	      }
+	
+	    	   };/*defaults end*/    
+	    jsPlumb.ready(function(){
+	    	var mainElement = document.querySelector("#jtk-demo-flowchart"),
+	    	canvasElement = mainElement.querySelector(".jtk-demo-canvas"),
+	        miniviewElement = mainElement.querySelector(".miniview"),
+	        nodePalette = mainElement.querySelector(".node-palette"),
+	        controls = mainElement.querySelector(".controls");
+	    	var nodePalette = mainElement.querySelector(".node-palette");
+	    	//var cavasSurface= canvasElement.querySelector(".jtk-surface-canvas");
+	    	//创建一个辅助的surface div;
+	    	var cavasSurface = document.createElement("div");
+	    	cavasSurface.style.top = "0px";
+	    	cavasSurface.style.left = "0px";
+	    	cavasSurface.style.width = "50px";
+	    	cavasSurface.style.height = "50px";
+	    	cavasSurface.style.position = "relative";
+	    	cavasSurface.classname = "jtk-surface-canvas";
+	    	jsPlumb.appendElement(cavasSurface, canvasElement);
+	    	jsPlumb.importDefaults({
+	            DragOptions : { cursor: 'pointer'},
+	            EndpointStyle : { fillStyle:'#225588' },
+	            Endpoint : [ "Dot", {radius:1} ],
+	            ConnectionOverlays : [
+	                [ "Arrow", { location:1 } ],
+	                [ "Label", {
+	                        location:0.5,
+	                        id:"label",
+	                        cssClass:"aLabel"
+	                    }]
+	            ],
+	            Anchor : 'Continuous',
+	            ConnectorZIndex:5,
+	            HoverPaintStyle:defaults.connectorHoverStyle,
+	            Container : cavasSurface
+	        });    	
+	    	var h, isdowned = false;
+	    	var tmpSelectedObjs = [];
+	    	var tmpStatus = null;
+	    	$(canvasElement).bind("mousedown", function(event){
+	    		if(3 == event.which){return;}
+	    		isdowned = true;
+	    		h = [event.pageX, event.pageY];
+	    		console.log("canvasElement mousedown");
+	    	});
+	    	$(canvasElement).bind("mousemove", function(event){
+	    		if(isdowned){
+	    			var dx = event.pageX - h[0];
+	    			var dy = event.pageY - h[1];
+	    			if($(tmpSelectedObjs).size()){
+    		    		console.log("canvasElement mousemove resize");
+    					$(tmpSelectedObjs).each(function(){
+							var h = $(this).height(), w = $(this).width();
+    						if(tmpStatus == "td-vresize"){
+    							var wn = $(this).next().width();
+    							$(this).width(w + dx);
+    							//$(this).next().width(wn - dx);
+    						}else if(tmpStatus == "td-hresize"){
+    							var hn = $(this).next().height();
+    							$(this).height(h + dy);
+    							//$(this).next().height(hn - dy);
+    						}else{
+	        		    		var curPos = jsPlumb.getPosition(this);
+	    						if(tmpStatus == "e-resize"){
+	    							$(this).width(w + dx);
+	    						}else if(tmpStatus == "w-resize"){
+	    							curPos.left = parseInt(curPos.left) + dx;
+	    							jsPlumb.setPosition(this, curPos);
+	    							$(this).width(w - dx);
+	    						}else if(tmpStatus == "s-resize"){
+	    							$(this).height(h + dy);
+	    						}else if(tmpStatus == "n-resize"){
+	    							curPos.top = parseInt(curPos.top) + dy;
+	    							jsPlumb.setPosition(this, curPos);
+	    							$(this).height( h - dy);
+	    						}else if(tmpStatus == "ne-resize"){
+	    							//右上角
+	    							curPos.top = parseInt(curPos.top) + dy;
+	    							jsPlumb.setPosition(this, curPos);
+	    							$(this).height( h - dy);
+	    							$(this).width( w + dx);
+	    						}else if(tmpStatus == "se-resize"){
+	    							//右下角
+	    							$(this).height( h + dy);
+	    							$(this).width( w + dx);
+	    						}else if(tmpStatus == "nw-resize"){
+	    							//左上角
+	    							curPos.top = parseInt(curPos.top) + dy;
+	    							curPos.left = parseInt(curPos.left) + dx;
+	    							jsPlumb.setPosition(this, curPos);
+	    							$(this).height( h - dy);
+	    							$(this).width( w - dx);
+	    						}else if(tmpStatus == "sw-resize"){
+	    							//左下角
+	    							curPos.left = parseInt(curPos.left) + dx;
+	    							jsPlumb.setPosition(this, curPos);
+	    							$(this).height( h + dy);
+	    							$(this).width( w - dx);
+	    						}
+    						}
+    					});
+	    			}else{
+		    			cavasSurface.style.top = (parseInt(cavasSurface.style.top.split("px")[0]) + dy) + "px";
+		    			cavasSurface.style.left = (parseInt(cavasSurface.style.left.split("px")[0]) + dx) + "px";	    				
+	    			}
+
+	    			h = [event.pageX, event.pageY];
+	    		}
+	    	});
+	    	$(canvasElement).bind("mouseup", function(event){
+	    		isdowned = false; h = null;
+            	tmpStatus = null;
+        		tmpSelectedObjs = [];
+	    		console.log("canvasElement mouseup");
+	    	})
+	    	var r = "helloworld";
+	    	var connecionMappings = {};
+	    	var nodeIds = 0, lineId = 0;
+	    	var options = {
+		        dragOptions: {
+		            zIndex: 50000,
+		            cursor: "move",
+		            clone: true,
+		            scope : r,
+		            ignoreZoom : !0, 
+		            doNotRemoveHelper : !0
+		        },
+		        typeExtractor: function (el) {
+		            return el.getAttribute("jtk-node-type");
+		        },
+		        dataGenerator: function (type) {
+		            return {
+		                w:120,
+		                h:80
+		            };
+		        }, 
+		        dropOptions : {
+			    	scope : r,
+			    	drop : function(event){
+			    		console.log(event);
+			    		var typeElement = event.drag.el.getAttribute("jtk-node-type"); 
+			    		/**增加一个节点**/
+			    		var nodeDiv = document.createElement("div");
+			    		var g = jsPlumb.getDragObject(arguments),
+	                    h = jsPlumb.getOffset(g);
+			    		//console.log("h.x:" + h.left +":h.y" + h.top );
+			    		//console.log("h.offsetLeft:" + g.offsetLeft +":h.offsetTop" + g.offsetTop );
+			    		//console.log("w:" + jsPlumb.getWidth(event.drag.el));
+			    		//h = {left : g.offsetLeft, top : g.offsetTop};
+	                     //i = mapLocation(h.left, h.top, 1);
+	                    var nodeId = new Date().getTime();
+	                    var i = jsPlumb.getOffset(canvasElement);
+	                    var j = jsPlumb.getOffset(cavasSurface);
+			    		$(nodeDiv).attr("style", "left:" + (h.left - i.left - j.left) +　"px;top:" + (h.top - i.top - j.top ) + "px");
+			    		$(nodeDiv).attr("id", "nodeId" + nodeId);
+			    		if( typeElement == "table"){
+			    			$(nodeDiv).addClass("tableElement");
+			    		}else{
+				    		$(nodeDiv).addClass("ctrlElement");
+			    		}
+			    		cavasSurface.appendChild(nodeDiv);
+			    		if( typeElement == "table"){
+			    			$(nodeDiv).append("<table cellspacing='0' cellpadding='0'><tbody><tr><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td></tr></tbody></table>");
+			    			$(nodeDiv).find("td").attr("unselectable", "on");
+			    			var w1 = $(nodeDiv).find("td:eq(0)").width();
+			    			$(nodeDiv).find("tbody td:eq(0)").width(w1 - 0);
+			    			var h1 = $(nodeDiv).find("td:eq(0)").height();
+			    			$(nodeDiv).find("tbody>tr:eq(0)").height(h1 - 0);
+			    			var tdRightMenu = {
+			    					  menuStyle: {
+			    					        width: '150px'
+			    					      },
+			    		    	      bindings:{
+			    		    	          'addColumnBefore': function(t) {
+			    		    	        	  var $td = $(t);
+			    		    	              var idx = $td.index();
+			    		    	              $(nodeDiv).find("table>tbody>tr").each(function(){
+			    		    	            	  var newTd = "<td></td>";
+			    		    	            	  $(newTd).insertBefore($(this).find("td:eq(" + idx + ")"));
+			    		    	            	  $(this).find("td:eq(" + idx + ")").contextMenu('myMenu1', tdRightMenu);
+			    		    	              });
+			    		    	          },
+			    		    	          'addColumnAfter': function(t) {
+			    		    	        	  $td = $(t);
+			    		    	              var idx = $td.index();
+			    		    	              $(nodeDiv).find("table>tbody>tr").each(function(){
+			    		    	            	  var newTd = "<td></td>";
+			    		    	            	  $(newTd).insertAfter($(this).find("td:eq(" + idx + ")"));
+			    		    	            	  $(this).find("td:eq(" + (1+idx) + ")").contextMenu('myMenu1', tdRightMenu);
+			    		    	              });
+			    		    	          },
+			    		    	          'addRowAbove' : function(t){
+			    		    	        	  var $td = $(t);
+			    		    	        	  var newtr = "<tr>";
+			    		    	        	  $td.parent().find("td").each(function(){
+			    		    	        		  newtr += "<td unselectable=\"on\" " + ($(this).attr("colspan") ? " colspan=" + $(this).attr("colspan") : "") + "></td>";
+			    		    	        	  });
+			    		    	        	  newtr += "</tr>";
+			    		    	        	  $(newtr).insertBefore($td.parent());
+			    		    	        	  $td.parent().prev().find("td").each(function(){
+			    		    	            	  $(this).contextMenu('myMenu1', tdRightMenu);
+			    		    	        	  });
+			    		    	        	  
+			    		    	          },
+			    		    	          'addRowUnder' : function(t){
+			    		    	        	  var $td = $(t);
+			    		    	        	  var newtr = "<tr>";
+			    		    	        	  $td.parent().find("td").each(function(){
+			    		    	        		  newtr += "<td" + ($(this).attr("colspan") ? " colspan=" + $(this).attr("colspan") : "") + "></td>";
+			    		    	        	  })
+			    		    	        	  newtr += "</tr>";
+			    		    	        	  $(newtr).insertAfter($td.parent());
+			    		    	        	  $td.parent().next().find("td").each(function(){
+			    		    	            	  $(this).contextMenu('myMenu1', tdRightMenu);
+			    		    	        	  });
+			    		    	          }
+			    		    	      }
+			    		    	};
+			    		    $(nodeDiv).find("table>tbody td").contextMenu('myMenu1', tdRightMenu);
+			    		    $(nodeDiv).each(function(){
+				    	    	jsPlumb.initDroppable(this, dropOptions_td, 'surfaceNodeDrag');
+			    		    })
+			    		}
+			            $(nodeDiv).mouseup(function(event){
+			            	console.log("nodeDiv mouseup");
+			            });
+			            $(nodeDiv).mousedown(function(event){
+				    		if(3 == event.which){return;}
+			            	var $this = $(this);
+			            	var cursor = $this.css("cursor");
+			            	if(cursor == 'crosshair'){
+			            		tmpStatus = $this.attr("cursor");
+			            		var td;
+			            		if(tmpStatus == "td-vresize"){
+				            		td = $(event.target).prev();
+					            	tmpSelectedObjs.push($this.find("table>tbody>tr:eq(0)").find("td:eq(" + td.index() + ")"));
+			            		}else if(tmpStatus == "td-hresize"){
+				            		td = $(event.target).parent().prev();
+					            	tmpSelectedObjs.push(td);
+			            		}
+				            	console.log("nodeDiv mousedown crosshair td" + td.html());
+			            	}else if(cursor != 'move'){
+				            	console.log("nodeDiv resize");
+			            		tmpStatus = cursor;
+			            		tmpSelectedObjs.push(this);
+			            	}
+			            });
+			            $(nodeDiv).mousemove(function(event){
+			            	var $this = $(this);
+			            	if(tmpStatus) return;
+			            	console.log("nodeDiv mousemove");
+		            		var pos = _pl(event);
+		            		var pos1 = jsPlumb.getOffset(this);
+		                    var surface = jsPlumb.getOffset(cavasSurface);
+		            		var dx = pos[0] - i.left - surface.left - pos1.left;
+		            		var dy = pos[1] - i.top - surface.top - pos1.top;
+		            		if(dx<=5){
+		            			if(dy <= 5){
+		            				$this.css("cursor", "nw-resize");
+		            			}else if(dy >= $(nodeDiv).height() - 5){
+		            				$this.css("cursor", "sw-resize");
+		            			}else
+		            				$this.css("cursor", "w-resize");
+		            		}else if( dx >= $this.width() -5){
+		            			if(dy <= 5){
+		            				$this.css("cursor", "ne-resize");
+		            			}else if(dy >= $this.height() - 5){
+		            				$this.css("cursor", "se-resize");
+		            			}else
+		            				$this.css("cursor", "e-resize");
+		            		}else if(dy <= 5){
+		            			$this.css("cursor", "n-resize");
+		            		}else if(dy >= $this.height() - 5){
+		            			$this.css("cursor", "s-resize");
+		            		}else{
+		            			var p1 = _pllocal(event);
+		            			if(p1.x<=3){
+		            				$this.css("cursor", "crosshair");
+		            				$this.attr("cursor", "td-vresize");
+		            			}else if(p1.y<=3){
+		            				$this.css("cursor", "crosshair");
+		            				$this.attr("cursor", "td-hresize");
+		            			}else{
+			            			$this.css("cursor", "move");
+		            			}
+		            		}
+			            });
+			    		var dragObj = jsPlumb.draggable(nodeDiv,
+			    			{
+			    				cursor : "move",
+				            	canDrag : function(){
+				            		return !tmpStatus;
+				            	}
+			    			});
+			    	}	
+			    }
+	    	};
+	    	var dropOptions_td = {
+	    			scope : r,
+	    			drop : function(event){
+	    				console.log(event);
+	    			}
+	    			
+	    	}
+	    	jsPlumb.initDraggable(document.getElementById("btnadd"), options.dragOptions, 'surfaceNodeDrag');
+	    	jsPlumb.initDraggable(document.getElementById("btnTableAdd"), options.dragOptions, 'surfaceNodeDrag');
+	    	jsPlumb.initDroppable(canvasElement, options.dropOptions, 'surfaceNodeDrag');
+	    });	
+
+    	   $(function(){
+    	   })
+	
+    </script>
+</head>
+
+<body>
+	<nav class="navbar navbar-default">
+	  <div class="container-fluid">
+	  	<span id="btnsave" class="btn btn-primary btn-default navbar-btn" ><i class="icon-save"></i> 保 存</span>
+	  	<span id="btnreset" class="btn btn-primary btn-default navbar-btn"  ><i class="icon-refresh"></i> 重 置</span>
+	  	<span id="btnadd" class="btn btn-primary btn-default navbar-btn" jtk-node-type="label" title="请拖放到主区域"><i class="icon-plus-sign"></i>增加标签</span>
+	  	<span id="btnTableAdd" class="btn btn-primary btn-default navbar-btn" jtk-node-type="table" title="请拖放到主区域"><i class="icon-plus-sign"></i>增加表格</span>
+  
+	  </div>
+	</nav>
+	<div class="container-fluid">
+	 		<div class="jtk-demo-main" id="jtk-demo-flowchart">
+	            <!-- the node palette -->
+	            <div class="sidebar">
+	            	<div class="panel panel-default" style="height:550px">
+		            	<div class="panel-heading">属性设置</div>
+		                <table class="table table-hover table-bordered table-condensed properTable">
+							  <tbody>
+							 	<tr>
+							 		<td class="col-sm-4">名称</td>
+							 		<td class="col-sm-8">
+							 		<div class="input-group" style="width:100%">
+								      <div style="width:100%;display:table-cell;margin-right:20px;">
+								      	aaaaaa
+								      </div>
+								      <div style="width:20px;display:table-cell"><button class="btnsmall btn-info"><span class="icon-search"></span></button></div>
+								    </div>
+    							</td>
+							 	</tr> 
+							 	<tr>
+							 		<td>名称</td>
+							 		<td><input type="text" class="form-control-small" ></td>
+							 	</tr> 
+							 	<tr>
+							 		<td>名称</td>
+							 		<td>
+							 			<select class="form-control-small">
+									         <option>1</option>
+									         <option>2</option>
+									         <option>3</option>
+									         <option>4</option>
+									         <option>5</option>
+									    </select>
+							 		</td>
+							 	</tr> 
+							 	<tr>
+							 		<td>名称</td>
+							 		<td>node</td>
+							 	</tr> 
+							 	<tr>
+							 		<td>名称</td>
+							 		<td>node</td>
+							 	</tr> 
+							 	<tr>
+							 		<td>名称</td>
+							 		<td>node</td>
+							 	</tr> 
+							 	<tr>
+							 		<td>名称</td>
+							 		<td>node</td>
+							 	</tr> 
+							 	<tr>
+							 		<td>名称</td>
+							 		<td>node</td>
+							 	</tr> 
+							  </tbody>
+							</table>
+						<div style="width:100%;border-top:1px solid #ddd"></div>
+					</div>
+	             </div>
+	
+	            <!-- this is the main drawing area -->
+	            <div class="jtk-demo-canvas jtk-surface">
+	                <!-- miniview -->
+	                <div class="miniview"></div>
+	            </div>	
+	       </div>
+    </div>
+    
+        <!--右键菜单的源-->
+     <div class="contextMenu" id="myMenu1">
+      <ul>
+        <li id="addColumnBefore">在此列之前插入一列</li>
+        <li id="addColumnAfter">在此列之后插入一列</li>
+        <li id="addRowAbove">在此行之上插入一行</li>
+        <li id="addRowUnder">在此行之下插入一行</li>
+      </ul>
+    </div>
+</body>
+
+
+</html>
