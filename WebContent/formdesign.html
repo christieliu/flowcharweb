@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>表单制作</title>
+<meta charset="utf-8">
+<meta name="renderer" content="webkit|ie-comp|ie-stand">
+<meta http-equiv="X-UA-Compatible" content="IE=edge; chrome=1">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<style type="text/css">
+@font-face{font-family:finex;src:url(https://assets.jiandaoyun.com/v1291/resources/font/iconfont.eot);src:url(https://assets.jiandaoyun.com/v1291/resources/font/iconfont.eot?#iefix) format('embedded-opentype'),url(https://assets.jiandaoyun.com/v1291/resources/font/iconfont.woff) format('woff'),url(https://assets.jiandaoyun.com/v1291/resources/font/iconfont.ttf) format('truetype'),url(https://assets.jiandaoyun.com/v1291/resources/font/iconfont.svg#svgFontName) format('svg')}
+html, body{padding:0;margin:0}
+body{overflow:hidden}
+#header{position:relative;width:100%;height:60px;background:rgba(255,255,255,0.8);border-bottom:solid 1px #e0e0e0}
+#header .nav-left{position:absolute;top:0;right:290px;bottom:0;left:10px;line-height:60px}
+#header .nav-right{display:none;position:absolute;top:0;right:20px;bottom:0;line-height:60px}
+#header .nav-home {
+    font-size: 40px;
+    color: #0DB3A6;
+    cursor: pointer;
+}
+
+.form_title_editor {
+	position: relative;
+    display: inline-block;
+    max-width: 100%;
+    padding: 0 40px 0 50px;
+}
+.form_title_editor .nav-home {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+}
+.form_entry_title {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 18px;
+    max-width: 300px;
+}
+a {
+    outline: 0;
+    text-decoration: none;
+}
+ol, ul{
+	padding:0;
+	margin:0
+}
+i[class*=icon-] {
+    font-family: finex;
+    font-style: normal;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+i.icon-angleleft:before {
+    content: "\e632";
+}
+i.icon-widget-text:before {
+    content: '\e60f';
+}
+i.icon-widget-textarea:before {
+    content: '\e60b';
+}
+i.icon-widget-number:before {
+    content: '\e60e';
+}
+i.icon-widget-datetime:before {
+    content: '\e60d';
+}
+li{
+	list-style-type : none;
+}
+* {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+#body {
+    position: absolute;
+    top: 60px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+#body .frame-navibar {
+    position: relative;
+    height: 40px;
+    background: #f1f1f1;
+}
+#form-factory {
+    background: #FAFAFA;
+    position: absolute;
+    top: 40px;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    display:block;
+}
+#form-frame-left {
+    background: #fff;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 250px;
+    bottom: 0;
+    border-right: solid 1px #e0e0e0;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+.frame-inner-list {
+    padding: 8px 0;
+    width: 100%;
+    height: 100%;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+#form-frame-left .widget-cate {
+    padding: 8px 12px;
+    font-size: 13px;
+}
+#form-frame-left ul {
+    position: relative;
+    overflow: hidden;
+    padding: 0 10px 10px 10px;
+}
+
+.form-edit-widget-label {
+    font-size: 12px;
+    display: block;
+    width: 50%;
+    line-height: 26px;
+    position: relative;
+    float: left;
+    left: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    padding: 2px;
+    color: #515151;
+}
+.form-edit-widget-label a {
+    display: block;
+    cursor: move;
+    background: #f9f9f9;
+    border: dashed 1px #dbdbdb;
+}
+.form-edit-widget-label i {
+    color: #91ADCE;
+    margin-right: 6px;
+    margin-left: 8px;
+    font-size: 14px;
+}
+#form-frame-east {
+    background: #FAFAFA;
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 300px;
+    bottom: 0;
+    border-left: solid 1px #e0e0e0;
+}
+#form-frame-east .property-head {
+    padding: 0 3px;
+    border-bottom: solid 1px #e0e0e0;
+    height: 40px;
+}
+#form-frame-east .property-content {
+    position: absolute;
+    top: 40px;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+#form-frame-center {
+    position: absolute;
+    top: 0;
+    left: 250px;
+    right: 300px;
+    bottom: 0;
+    overflow: auto;
+    padding: 0;
+    background-color:#fff
+}
+
+.dragged{position:absolute;opacity:.7;filter:alpha(opacity=70);z-index:2000}
+li.placeholder{border:dashed 1px #e0e0e0; height:33px}
+
+.dragging{}
+.container{
+}
+.formelement{
+	position : relative;
+	
+}
+</style>
+</head>
+
+<body>
+<div id="header">
+	<div class="nav-left">
+		<div class="form_title_editor" >
+		<a class="nav-home"><i class="icon-angleleft"></i></a>
+		<div class="form_entry_title">
+			<input value="未命名表单" style="width: 98px;"><span class="name-pre">未命名表单</span>
+		</div>
+		</div>
+	</div>
+</div>
+<div id="body">
+	<div class="frame-navibar"></div>
+	<div id="form-factory">
+		<div id="form-frame-left">
+			<div class="frame-inner-list">
+				<div class="widget-cate">基础字段</div>
+				<ul>
+					<li class="form-edit-widget-label" typeId="textbox">
+						<a><i class="icon-widget-text"></i><span>单行文本</span></a>
+					</li>
+					<li class="form-edit-widget-label" typeId="textarea">
+						<a><i class="icon-widget-textarea"></i><span>多行文本</span></a>
+					</li>
+					<li class="form-edit-widget-label" typeId="numberic">
+						<a><i class="icon-widget-number"></i><span>数字</span></a>
+					</li>
+					<li class="form-edit-widget-label" typeId="datetime">
+						<a><i class="icon-widget-datetime"></i><span>日期时间</span></a>
+					</li>
+				</ul>
+			</div>
+		</div>
+		<div id="form-frame-east">
+			<div class="property-head"></div>
+			<div class="property-content"></div>
+		</div>
+		<div id="form-frame-center" class="container">
+		
+		</div>
+	</div>
+</div>
+</body>
+<script src="js/jquery-1.12.3.min.js"></script>
+<script src="js/jquery-sortable.js"></script>
+<script type="text/javascript">
+	$(function(){
+		//可拖拽的表单元素图标
+	    var  eventNames = {
+		    start: "touchstart mousedown",
+		    drop: "touchend touchcancel mouseup",
+		    drag: "touchmove mousemove",
+		    scroll: "scroll"
+		  };
+		var defaultLabelOptions ={
+			onDragStart : function($item, _super, event){
+			    $item.css({
+			        height: $item.outerHeight(),
+			        width: $item.outerWidth()
+			    });
+			    $item.addClass("dragged");
+			},
+		    onDrag: function ($item, position, _super, event) {
+		        $item.css(position);
+		    },
+		    onDrop: function ($item, container, _super, event) {
+		    }
+		};
+		function getRelativePosition(pointer, lastPointer, element) {
+			var offset = element.position();
+			return {
+			    left: offset.left + pointer.left - lastPointer.left,
+			    top: offset.top + pointer.top - lastPointer.top
+			}
+		}		
+		function DragableLabel(element, options) {
+		    this.el = element;
+		    this.options = $.extend( {}, defaultLabelOptions, options);
+		    this.dragProxy = $.proxy(this.drag, this);
+		    this.dropProxy = $.proxy(this.drop, this);
+		    this.el.on(eventNames.start, $.proxy(this.dragInit, this));
+		}
+		DragableLabel.prototype = {
+			dragInit: function(e) {
+				this.$document = $(this.el[0].ownerDocument)
+	        	console.log("aaa");
+		        if( !this.disabled && this.isValidDrag(e)) {
+		        	this.setPointer(e);
+		        	this.toggleListeners("on");
+		        }
+		    },
+		    isValidDrag: function(e) {
+		      return e.which == 1 ||
+		        e.type == "touchstart" && e.originalEvent.touches.length == 1
+		    },	
+		    toggleListeners: function(method){
+		        var that = this,
+		        events = ['drag','drop']
+		        $.each(events,function  (i,event) {
+		            that.$document[method](eventNames[event], that[event + "Proxy"])
+		        })		    	
+		    },
+		    drag : function(e){
+		    	if(!this.dragging){
+		    		this.options.onDragStart(this.el, defaultLabelOptions.onDragStart, e);
+		    		this.dragging = true;
+		    	}
+		    	this.setPointer(e);
+		        this.options.onDrag(this.el,
+                        getRelativePosition(this.pointer, this.lastPointer, this.el),
+                        this.options.onDrag,
+                        e)
+		    },
+		    drop : function(e){
+		    	this.toggleListeners("off");
+		    	if(this.dragging){
+			    	this.options.onDrop(this.el, null, defaultLabelOptions.onDrop, e);
+					this.dragging = false;
+		    	}
+		    },
+		    setPointer: function (e) {
+		    	var pointer = this.getPointer(e);
+		        this.lastPointer = this.pointer;
+		        this.pointer = pointer;
+		    },
+		    getPointer: function(e) {
+		        var o = e.originalEvent || e.originalEvent.touches && e.originalEvent.touches[0];
+		        return {
+		          left: e.pageX || o.pageX,
+		          top: e.pageY || o.pageY
+		        }
+		    }	    
+	    }
+		var ul = $("#form-frame-left").find("ul");
+		var d = {};
+		ul.find("li").each(function(){
+			var c = new DragableLabel($(this), {
+	             onDragStart: function($item, _super, event) {
+	                 $item.clone().insertAfter($item);
+	                 $item.width($item.width());
+	                 console.log($item.offset());
+	                 var offset = $item.offset();
+	                 _super($item,  _super, event);
+	                 $item.appendTo("body");
+	                 $item.css(offset);
+	             },
+	             onDrop: function($item, c, d, e) {
+	                 if ($item.hasClass("form-edit-widget-label")) {
+	                	 var typeId = $item.attr("typeId");
+	                	 $item.remove();
+	                	 if(c){
+	                		 
+	                	 }else{
+	                		 //添加在行块当中
+	                		 var $target = $(e.srcElement || e.target);
+	                		 var position = $target.position();
+	                		 console.log($target)
+	                		 if($target.is("div") && $target.hasClass("container")){
+	                			 var divOffset = $target.offset();
+	                			 switch(typeId){
+		                			 case "textbox":
+		                				 var elHtml  = "<input type='text'/>";
+		                				 var $newEl = $(elHtml);
+		                				 $target.append($newEl);
+		                				 $newEl.css("left" , (positon.left - divOffset.left) + "px");
+		                				 $newEl.css("top" , (positon.top - divOffset.top) + "px");
+		                				 break;
+		                			 default :break;
+	                			 }
+	                		 }
+	                		 
+	                	 }
+	                 }
+	             }
+	         });
+		});
+		//$("#form-frame-center>ul").sortable({group: "no-drop",drag: false})
+		//$("body")["on"]("mousedown.1", function(){console.log("aaaa")})
+	})
+</script>
+</html>
