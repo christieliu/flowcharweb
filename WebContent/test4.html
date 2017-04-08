@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+	
+
+    <style type="text/css">
+    	*{
+			box-sizing:border-box;
+			-moz-box-sizing:border-box; /* Firefox */
+			-webkit-box-sizing:border-box; /* Safari */
+    	}
+		table{
+			border-collapse:collapse;
+		}	
+		td{
+			border : 1px solid #000;
+			padding :0px;
+		}	
+		tr{
+			height : 60px;
+		}
+		#mainTable table tr:first-child td{
+		    border-top-style:none;
+		}
+		#mainTable table tr td:first-child{
+		    border-left-style:none;
+		}
+		#mainTable table tr:last-child td{
+		    border-bottom-style:none;
+		}
+		#mainTable table tr td:last-child{
+		    border-right-style:none;
+		}
+		.helperline{
+			position : absolute;
+			background-color : #eee;
+			z-index : 1000;
+		}
+		.tdSelected{
+			background-color : #eee;
+			opacity:0.7;
+			filter:alpha(opacity=70); /* 针对 IE8 以及更早的版本 */
+		}
+		
+		html, body{
+			padding :5px; margin :0;
+		}
+		body{
+			height:768px;
+			-moz-user-select: none;-webkit-user-select: none;
+			-ms-user-select: none;-khtml-user-select: none;
+			user-select: none;
+		}
+		.dragarea{
+			position : absolute;
+			border : 1px dashed #000;
+			background : #eee;
+			z-index : 1000;
+			opacity:0.7;
+			filter:alpha(opacity=70); /* 针对 IE8 以及更早的版本 */
+		}
+		.rcMenu{
+			position : absolute;
+			background-color : #eee;
+			z-index : 1000;
+			display: none;
+			width : 150px;opacity:0.7;
+			filter:alpha(opacity=70); /* 针对 IE8 以及更早的版本 */
+		}
+		.rcMenu li{
+			cursor : pointer;
+		}
+    </style>
+
+    <script>
+	    
+    </script>
+</head>
+
+<body>
+<div style="padding:10px;">
+	<input type="button" value="合并单元格" id="btnTdmerge" />
+	<input type="button" value="测试" id="btnTest" />
+</div>
+	<table id="mainTable">
+		<tbody>
+			<tr>
+				<td>1</td>
+				<td>2</td>
+				<td>3</td>
+				<td>4</td>
+			</tr>
+			<tr>
+				<td>5</td>
+				<td>6</td>
+				<td>7</td>
+				<td>8</td>
+			</tr>
+			<tr>
+				<td>&nbsp;</td>
+				<td>
+					<table style="width:100%;">
+						<tbody>
+							<tr>
+								<td>1</td>
+								<td>2</td>
+								<td>3</td>
+								<td>4</td>
+							</tr>
+							<tr>
+								<td>5</td>
+								<td>6</td>
+								<td>7</td>
+								<td>8</td>
+							</tr>
+							<tr>
+								<td>&nbsp;</td>
+								<td>&nbsp;</td>
+								<td>&nbsp;</td>
+								<td>&nbsp;</td>
+							</tr>
+							<tr>
+								<td>&nbsp;</td>
+								<td>&nbsp;</td>
+								<td>&nbsp;</td>
+								<td>&nbsp;</td>
+							</tr>
+							
+						</tbody>
+					</table>				
+				</td>
+				<td>&nbsp;</td>
+				<td>&nbsp;</td>
+			</tr>
+			<tr>
+				<td>&nbsp;</td>
+				<td>&nbsp;</td>
+				<td>&nbsp;</td>
+				<td>&nbsp;</td>
+			</tr>
+			
+		</tbody>
+	</table>
+	<div class="rcMenu" id="tableRcMenu">
+		<ul>
+			<li id="mergeTd">合并单元格</li>
+			<li id="insertRow">插入行</li>
+			<li id="addColumn">插入列</li>
+		</ul>
+	</div>
+</body>
+    <script src="js/jquery-1.12.3.min.js"></script>
+    <!-- <script src="js/jquery-smartMenu.js?v=3"></script>
+    <script src="js/bootstrap.min.js"></script> 
+    <script src="js/jsPlumb-2.0.7.js?t=801222"></script>
+    <script src="js/jquery.contextmenu.r2.js"></script>-->
+    <script type="text/javascript">
+	    var _intersects = function(r1, r2) {
+		    var x1 = r1.x, x2 = r1.x + r1.w, y1 = r1.y, y2 = r1.y + r1.h,
+		        a1 = r2.x, a2 = r2.x + r2.w, b1 = r2.y, b2 = r2.y + r2.h;
+		
+			return  ( (x1 <= a1 && a1 <= x2) && (y1 <= b1 && b1 <= y2) ) ||
+			        ( (x1 <= a2 && a2 <= x2) && (y1 <= b1 && b1 <= y2) ) ||
+			        ( (x1 <= a1 && a1 <= x2) && (y1 <= b2 && b2 <= y2) ) ||
+			        ( (x1 <= a2 && a1 <= x2) && (y1 <= b2 && b2 <= y2) ) ||	
+			        ( (a1 <= x1 && x1 <= a2) && (b1 <= y1 && y1 <= b2) ) ||
+			        ( (a1 <= x2 && x2 <= a2) && (b1 <= y1 && y1 <= b2) ) ||
+			        ( (a1 <= x1 && x1 <= a2) && (b1 <= y2 && y2 <= b2) ) ||
+			        ( (a1 <= x2 && x1 <= a2) && (b1 <= y2 && y2 <= b2) );
+		};
+		
+
+		 
+	    $(function(){
+			function FormUtils(){
+				var retArray = [], tmpdx, tmpdx2,tmpdy;
+				var options = {borderWidth : 1};
+				//
+				var _recusiveChangeTdWhenEast = function(targetTd){
+					var $this = $(targetTd);
+					//console.log($this.offset().left + ":" + $this.width());
+					//$this.data("oldWidth", $this.width() + options.borderWidth);
+					if(!$this.find(">table").size()){
+						if(tmpdx <0 && (tmpdx + $this.width() < minTdWidth)){
+							tmpdx = Math.max(tmpdx, minTdWidth - $this.width());
+						}
+						retArray.push($this);
+						$this.data("oldWidth", $this.width());
+						return;
+					}
+					$this.find(">table>tbody>tr").find(">td:last").each(function(n){
+						_recusiveChangeTdWhenEast(this, tmpdx);
+					});
+				}
+				var _recusiveChangeTdWhenWest = function(targetTd){
+					var $this = $(targetTd);
+					if(!$this.find(">table").size()){
+						if( tmpdx >0 && (-tmpdx + $this.width() < minTdWidth)){
+							tmpdx = Math.min(tmpdx, $this.width() - minTdWidth );
+						}
+						retArray.push($this);
+						$this.data("oldWidth", $this.width());
+						return;
+					}
+					$this.find(">table>tbody>tr").find(">td:first").each(function(n){
+						_recusiveChangeTdWhenWest(this);
+					});
+				}
+				//向上寻找td
+				var _recrusiveTd = function(targetTd){
+					var $targetTd = $(targetTd);
+					//判断是否一行中最末尾的td
+					if($targetTd.index() == $targetTd.parent().find(">td").size() -1 ){
+						var $parentTd = $targetTd.parent().closest("td");
+						if($parentTd.size()){
+							return _recrusiveTd($parentTd);
+						}
+					}
+					return targetTd;
+				}
+				/**向右拉动单元格, 目标单元格变宽**/
+				var _changeTdWhenEast = function(targetTd){
+					retArray = [];
+					_recusiveChangeTdWhenEast(targetTd);
+					return retArray; 
+				}
+				/**右边临近的单元格缩窄**/
+				var _changeTdWhenWest = function(targetTd, deltaX){
+					retArray = [];
+					_recusiveChangeTdWhenWest(targetTd);
+					return retArray; 
+				}
+				
+				var _getRightBorder = function(el){
+					console.log(el.width())
+					console.log(el.css("width"))
+					return el.offset().left + el.width();
+				}
+				
+
+				var _isSameRightBorder = function(el1, el2){
+					console.log(_getRightBorder(el1));
+					console.log(_getRightBorder(el2));
+					
+					return Math.abs(_getRightBorder(el1) - _getRightBorder(el2)) <= options.borderWidth;
+				}
+				/**改变列宽**/
+				this.changeTdVertical = function(targetTd, deltaX){
+					var changeEl = _recrusiveTd(targetTd);
+					console.log(changeEl.html());
+					tmpdx = deltaX;
+	    			var rightBorder = changeEl.width() + changeEl.offset().left;
+	    			var irow = changeEl.parent().index();
+	    			var changeTable = changeEl.closest("table"), trs = changeTable.find(">tbody>tr");
+	    			var leftTds = [], rightTds = [];
+	    			for(var i = 0; i < trs.size(); i++){
+	    				 var curTr = trs.eq(i);
+    					 var rowTd = curTr.find(">td");
+    					 for(var j = 0; j < rowTd.size(); j++){
+    						 var curTd = rowTd.eq(j);
+    						 if(Math.abs(curTd.offset().left + curTd.width() - rightBorder) <= options.borderWidth){
+    							 leftTds = leftTds.concat(_changeTdWhenEast(curTd));
+    							 console.log(leftTds.length);
+    							 break;
+    						 }
+    					 }
+	    			}	
+	    			console.log("total leftTds length" + leftTds.length + ":" + tmpdx);
+	    			//changeEl = changeEl.next();
+		    		if( changeEl.size()){
+		    			//changeTable = changeEl.closest("table");
+		    			trs = changeTable.find(">tbody>tr");
+		    			for(var i = 0; i < trs.size(); i++){
+		    				 var curTr = trs.eq(i);
+		   					 var rowTd = curTr.find(">td");
+		   					 for(var j = 0; j < rowTd.size(); j++){
+		   						 var curTd = rowTd.eq(j);
+		   						 console.log(curTd.offset().left + ":" + rightBorder)
+		   						 if( Math.abs(curTd.offset().left - rightBorder) <= options.borderWidth * 2){
+		   							 rightTds = rightTds.concat(_changeTdWhenWest(curTd));
+		   							 break;
+		   						 }
+		   					 }
+		    			}
+		    			console.log("total rightTds length" + rightTds.length + ":" + tmpdx);	
+	    			}
+	    			$(leftTds).each(function(){
+	    				var $this = $(this);
+	    				$this.width(parseInt($this.data("oldWidth")) + tmpdx);
+	    			})	
+	    			$(rightTds).each(function(){
+	    				var $this = $(this);
+	    				console.log("oldWidth :" + $this.data("oldWidth"));
+	    				$this.width(parseInt($this.data("oldWidth")) - tmpdx);
+	    			})	
+	    			
+				}
+				/***改变行高计算需要移动哪一行**/
+				this.getHorizontalTr = function (targetTd){
+					var $currentTd = $(targetTd);
+					var oldHeight, changeEl;
+					var rowspan = $currentTd.attr("rowspan");
+					if(rowspan && rowspan > 1){
+						var $table = $currentTd.closest("table");
+						var $trs = $table.find(">tbody>tr");
+						var topH = $currentTd.parent().offset().top 
+						var bottomH = topH +  $currentTd.height();
+						for(var i = 0 ; i < $trs.length; i++){
+							var $tr = $trs.eq(i);
+							if( ($tr.offset().top <= topH) && ($tr.offset().top + $tr.height() >= bottomH)){
+								return $tr;
+							}
+						}
+					}else{
+						return $currentTd.parent(); 
+					}
+				}
+				
+				/**改变行高**/
+				this.changeTdHorizontal = function(targetTd, dy){
+					var changeEl = $(targetTd);
+					var oldHeight = changeEl.height();
+					var deltaY = dy;
+					if(dy < 0){
+						deltaY = ( oldHeight + dy ) >= minTdHeight ? dy  : minTdHeight - oldHeight;
+						changeEl.find("table>tbody>tr:last").each(function(){
+							var oldH = $(this).height();
+							deltaY = Math.max(deltaY, ( oldH + dy ) >= minTdHeight ? dy  : minTdHeight - oldH);
+		    			})
+					}
+	    			changeEl.find("table>tbody>tr:last").each(function(){
+	    				$(this).height($(this).height() + deltaY);
+	    			})
+	    			changeEl.height(deltaY + oldHeight);		
+				}
+				/**增加一行**/
+				this.addRow = function(targetId, position){
+					var $table = $(targetId).closest("table");
+					var appendHtml = "<tr>";
+					$(targetId).parent().find(">td").each(function(){
+						var colspan = $(this).attr("colspan");
+						colspan = colspan ? parseInt(colspan) : 0;
+						appendHtml += "<td" + (colspan > 1 ? " colspan=" + colspan : "")  + ">&nbsp;</td>";
+					})
+					appendHtml += "</tr>";
+					//console.log(appendHtml);
+					//console.log($(targetId).html());
+					var trIndex = $(targetId).parent().index();
+					var $trs = $table.find(">tbody>tr");
+					for( var i = 0; i <= (trIndex -1); i++ ){
+						$trs.eq(i).find(">td").each(function(){
+							var $td = $(this);
+							var rowspan = $td.attr("rowspan");
+							console.log("rowspan: " + rowspan)
+							rowspan = rowspan ? parseInt(rowspan) : 1;
+							console.log($td.offset().top + $td.height());
+							if( rowspan > 1 &&  ($td.offset().top < $(targetId).offset().top )
+									&& ($td.offset().top + $td.height() >= $(targetId).offset().top + $(targetId).height() )){
+								$td.attr("rowspan", rowspan+1);
+							}
+						})
+					}
+					$(appendHtml).insertBefore($(targetId).parent());
+				}
+				//增加一列
+				this.addColumn = function(targetId, position){
+					var $table = $(targetId).closest("table");
+					var leftBorder = $(targetId).offset().left;
+					var newTds = [];
+					$table.find(">tbody>tr").each(function(){
+						var tds = $(this).find(">td");
+						for(var i=0; i < tds.length ; i++){
+							if(tds.eq(i).offset().left == leftBorder){
+								newTds.push(tds.eq(i));
+								break;
+							}
+						}
+					})
+					$(newTds).each(function(){
+						$("<td style='width:" + minTdWidth +"px'>&nbsp;</td>").insertBefore($(this));
+					})
+				}
+				/**合并单元格**/
+				this.mergeTd = function(){
+					var tds = $("td.tdSelected");
+		    		if(!tds.size()) return;
+		    		//先判断是否符合合并条件
+		    		var tdCount = 0, minCol, maxCol, minRow, maxRow;
+		    		tds.each(function(){
+		    			var $this = $(this);
+		    			tdCount += ($this.attr("colspan") ? parseInt($this.attr("colspan")) : 1) * ($this.attr("rowspan") ? parseInt($this.attr("rowspan")) : 1);
+		    			minCol = (minCol === undefined) ? $this.index() : Math.min(minCol, $this.index());
+		    			maxCol = (maxCol === undefined) ? $this.index() : Math.max(maxCol, $this.index());
+		    			minRow = (minRow === undefined) ? $this.parent().index() : Math.min(minRow, $this.parent().index());
+		    			maxRow = (maxRow === undefined) ? $this.parent().index() : Math.max(maxRow, $this.parent().index());
+		    		})
+		    		console.log(tdCount);
+		    		console.log(minCol + ":" + maxCol + ":" + minRow + ":" + maxRow);
+		    		var tdFirst = tds.first(), tdLast = tds.last();
+		    		var cols = 0,$td, rows = 0, $tmpTr;
+		    		cols += tdFirst.attr("colspan") ? parseInt(tdFirst.attr("colspan")) : 1;
+		    		$td = tdFirst.next();
+		    		while($td.size() && $td.hasClass("tdSelected")){
+		    			cols += $td.attr("colspan") ? parseInt($td.attr("colspan")) : 1;
+		    			$td = $td.next();
+		    		}
+		    		rows += tdFirst.attr("rowspan") ? parseInt(tdFirst.attr("rowspan")) : 1;
+		    		$tmpTr = tdFirst.parent().next();
+		    		var $firstTd = $tmpTr.find(">td:eq(0)");
+		    		var bottomH = tdLast.offset().top + tdLast.height();
+		    		while($firstTd.size() && ($firstTd.offset().top + $firstTd.height() <= bottomH)){
+			    		$td = $tmpTr.find(">td.tdSelected:eq(0)");
+		    			if($td.size()  && $td.offset().left == tdFirst.offset().left)
+		    				rows += $td.attr("rowspan") ? parseInt($td.attr("rowspan")) : 1;
+		    			$tmpTr = $tmpTr.next();
+		    			$firstTd = $tmpTr.find(">td:eq(0)");
+		    		}
+		    		
+		    		console.log(cols + ":" + rows);
+		    		$(tds).each(function(n){
+		    			var $td = $(this);
+		    			if(n == 0){
+		    				$td.attr("colspan", cols);
+		    				$td.attr("rowspan", rows);
+		    				$td.removeClass("tdSelected");
+		    			}else{
+		    				$td.remove();
+		    			}
+		    		});
+				}
+			}	    	
+	    	var isDown = false, isDragTd = false;
+	    	var lastPoint ;
+	    	var changeEl, dropTable;
+	    	var minTdHeight = 20, minTdWidth = 10;
+	    	var formUtils = new FormUtils();
+	    	$("table").on("mousemove", function(e){
+	    		if(!isDown && !isDragTd){
+		    		var target = e.srcElement || e.target;
+		    		var offset = $(target).offset();
+	    			var w = $(target).width(), h = $(target).height();
+	    			offset.left += w; offset.top += h;
+	    			//console.log(offset);
+	    			if(offset.top - e.pageY <=2){
+	    				$("body").css("cursor", "s-resize");
+	    			}else if( offset.left - e.pageX <=2){
+	    				$("body").css("cursor", "e-resize");
+	    				//console.log("move" + $(target).html());
+	    			}else{
+		    			$("body").css("cursor", "default");
+		    		}
+	    		}
+	    	}).on("mouseout", function(e){
+	    		var target = e.relatedTarget;
+	    		if(!isDown && target){
+	    			if(target.tagName.toLowerCase() == "body" || $(target).hasClass("rcMenu")){
+	    				$("body").css("cursor", "default");
+	    			}
+	    		}
+	    	});
+	    	
+	    	$("table").on("mousedown", function(e){
+	    		var target = e.srcElement || e.target;
+	    		if(e.which == 3){
+	    			//弹出右键菜单
+	    			$("#tableRcMenu").css("left" ,e.pageX + "px");
+	    			$("#tableRcMenu").css("top"  ,e.pageY + "px");
+	    			$("#tableRcMenu").show();
+	    			$("#tableRcMenu").data("target", target);
+	    			//e.stopPropagation();
+	    			return;
+	    		}
+	    		$("#tableRcMenu").hide();
+	    		var resizeState = $("body").css("cursor");
+	    		var target = e.target;
+	    		var tagName = target.tagName.toLowerCase();
+	    		if(resizeState == "s-resize"){
+	    			if(tagName == "table"){
+    					changeEl = $(target).find(">tbody>tr:last");
+	    			}else if(tagName == "td"){
+		    			changeEl = formUtils.getHorizontalTr(target);
+	    				target = $(target).closest("table");
+	    			}else{
+	    				return ;
+	    			}
+	    			isDown = true;
+	    			lastPoint = {left : e.pageX, top : e.pageY};
+	    			var span=$("<div class='helperline'></div>");
+	    			span.appendTo($("body"));
+	    			span.css("left", $(target).offset().left + "px");
+	    			span.css("width", $(target).width() + "px");
+	    			span.css("height",  "1px");
+	    			span.css("top", e.pageY +  "px");
+	    		}else if(resizeState == "e-resize"){
+	    			if(tagName == "table"){
+    					changeEl = $(target).find(">tbody>tr").find(">td:last");
+	    			}else if(tagName == "td"){
+	    				changeEl = $(target);
+	    			}else{
+	    				return ;
+	    			}
+	    			isDown = true;
+	    			lastPoint = {left : e.pageX, top : e.pageY};
+	    			var span=$("<div class='helperline'></div>");
+	    			span.appendTo($("body"));
+	    			span.css("left", e.pageX + "px");
+	    			span.css("width", "1px");
+	    			var topTable = $(target).closest("table");
+	    			span.css("height", topTable.height() + "px");
+	    			span.css("top", topTable.offset().top +  "px");
+	    		}else if(tagName == "td"){
+	    			//拖拽区域;
+	    			isDragTd = true;
+	    			lastPoint = {left : e.pageX, top : e.pageY};
+	    			var dragDiv=$("<div class='dragarea'></div>");
+	    			dragDiv.appendTo($("body"));
+	    			dragDiv.css("left", e.pageX + "px");
+	    			dragDiv.css("top", e.pageY + "px");
+	    			dropTable = $(target).closest("table");
+	    			dropTable.find(".tdSelected").removeClass("tdSelected");
+	    		}
+	    	});
+	    	$("body").on("mousemove", function(e){
+	    		var target = e.srcElement || e.target;
+	    		var tagName = target.tagName.toLowerCase();
+	    		//console.log(target.tagName);
+	    		if(isDown){
+	    			var spanLine = $(".helperline");
+	    			var offset = spanLine.offset();
+		    		var resizeState = $("body").css("cursor");
+		    		if(resizeState == "s-resize"){
+		    			spanLine.offset({top : e.pageY, left : offset.left});
+		    		}else if(resizeState == "e-resize"){
+		    			spanLine.offset({top : offset.top, left : e.pageX});
+		    		}
+	    		}else if(isDragTd){
+	    			var dragDiv = $("div.dragarea");
+	    			var dx = e.pageX - lastPoint.left;
+	    			var dy = e.pageY - lastPoint.top;
+	    			dx < 0 ? dragDiv.css("left", parseInt(lastPoint.left + dx) + "px") : dragDiv.css("left", lastPoint.left + "px");
+	    			dy < 0 ? dragDiv.css("top", parseInt(lastPoint.top + dy) + "px") : dragDiv.css("top", lastPoint.top + "px");
+	    			dragDiv.width(Math.abs(dx));
+	    			dragDiv.height(Math.abs(dy));
+	    		}
+	    	});
+	    	
+	    	
+	    	
+	    	$("body").on("mouseup", function(e){
+	    		if(isDown){
+		    		isDown = false;
+		    		$(".helperline").remove();
+		    		var resizeState = $("body").css("cursor");
+		    		var dx = e.pageX - lastPoint.left;
+		    		var dy = e.pageY - lastPoint.top;
+		    		if(resizeState == "s-resize"){
+		    			formUtils.changeTdHorizontal(changeEl, dy);
+		    		}else if(resizeState == "e-resize"){
+		    			//console.log(dx +":" + oldW + ", changeEl" + changeEl.html());
+		    			formUtils.changeTdVertical(changeEl, dx);
+		    			//changeEl.data("oldWidth", oldW);
+		    		}
+		    		chanegeEl = null;
+		    		$("body").css("cursor", "default");
+	    		}else if(isDragTd){
+	    			isDragTd = false;
+    				var tdArray = [];
+	    			$(dropTable).find(">tbody>tr>td").each(function(){
+	    				var $td = $(this), x1, x2;
+	    				x2 = {x : $td.offset().left, y : $td.offset().top, w : $td.width(), h : $td.height()};
+	    				x1 = {x :  Math.min(lastPoint.left , e.pageX) , y : Math.min(lastPoint.top , e.pageY), w : Math.abs(e.pageX - lastPoint.left), h :  Math.abs(e.pageY - lastPoint.top)};
+	    				if(_intersects(x1, x2)){
+	    					tdArray.push(this);
+	    				}
+	    			})
+	    			if(tdArray.length >1){
+	    				$(tdArray).addClass("tdSelected");
+	    			}
+	    			dropTable = null;
+		    		$(".dragarea").remove();
+	    		}
+	    	});
+	    	
+	    	//合并单元格
+	    	$("#btnTdmerge").click(function(){
+	    		
+	    	})
+	    	$(window).on("mouseout", function(e){
+	    		if(isDown && !e.relatedTarget){
+		    		isDown = false;
+		    		$(".helperline").remove();
+	    		}else if(isDragTd && !e.relatedTarget){
+	    			isDragTd = false;
+		    		$(".dragarea").remove();
+	    		}
+	    	})
+	    	
+	    	$("#btnTest").click(function(){
+	    		var $mainTalbe = $("#mainTable");
+	    		$mainTalbe.find(">tbody>tr:first").each(function(){
+	    			var $this = $(this);
+	    			console.log("tr:" + $this.width());
+	    			$this.find(">td").each(function(n){
+		    			console.log("td" + (n+1) + $(this).width());
+		    		})
+	    		})
+	    	});
+	    	document.oncontextmenu = function(){return false;};
+	    	$("body").click(function(){
+	    		$("#tableRcMenu").hide();
+	    	})
+	    	$("#tableRcMenu").find("li").click(function(){
+	    		var target = $("#tableRcMenu").data("target");
+	    		var $li = $(this);
+	    		switch($li.attr("id")){
+	    			case "mergeTd":
+	    				formUtils.mergeTd(target);
+	    				break;
+	    			case "insertRow":
+	    				formUtils.addRow(target);
+	    				break;
+	    			case "addColumn":
+	    				formUtils.addColumn(target);
+	    				break;
+	    			default : break;
+	    		}
+	    	});
+	    });
+    </script>
+</html>

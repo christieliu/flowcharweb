@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>表单制作</title>
+<meta charset="utf-8">
+<meta name="renderer" content="webkit|ie-comp|ie-stand">
+<meta http-equiv="X-UA-Compatible" content="IE=edge; chrome=1">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<style type="text/css">
+@font-face{font-family:finex;src:url(https://assets.jiandaoyun.com/v1291/resources/font/iconfont.eot);src:url(https://assets.jiandaoyun.com/v1291/resources/font/iconfont.eot?#iefix) format('embedded-opentype'),url(https://assets.jiandaoyun.com/v1291/resources/font/iconfont.woff) format('woff'),url(https://assets.jiandaoyun.com/v1291/resources/font/iconfont.ttf) format('truetype'),url(https://assets.jiandaoyun.com/v1291/resources/font/iconfont.svg#svgFontName) format('svg')}
+html, body{padding:0;margin:0}
+body{overflow:hidden}
+#header{position:relative;width:100%;height:60px;background:rgba(255,255,255,0.8);border-bottom:solid 1px #e0e0e0}
+#header .nav-left{position:absolute;top:0;right:290px;bottom:0;left:10px;line-height:60px}
+#header .nav-right{display:none;position:absolute;top:0;right:20px;bottom:0;line-height:60px}
+#header .nav-home {
+    font-size: 40px;
+    color: #0DB3A6;
+    cursor: pointer;
+}
+
+.form_title_editor {
+	position: relative;
+    display: inline-block;
+    max-width: 100%;
+    padding: 0 40px 0 50px;
+}
+.form_title_editor .nav-home {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+}
+.form_entry_title {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 18px;
+    max-width: 300px;
+}
+a {
+    outline: 0;
+    text-decoration: none;
+}
+ol, ul{
+	padding:0;
+	margin:0
+}
+i[class*=icon-] {
+    font-family: finex;
+    font-style: normal;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+i.icon-angleleft:before {
+    content: "\e632";
+}
+i.icon-widget-text:before {
+    content: '\e60f';
+}
+i.icon-widget-textarea:before {
+    content: '\e60b';
+}
+i.icon-widget-number:before {
+    content: '\e60e';
+}
+i.icon-widget-datetime:before {
+    content: '\e60d';
+}
+li{
+	list-style-type : none;
+}
+* {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+#body {
+    position: absolute;
+    top: 60px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+#body .frame-navibar {
+    position: relative;
+    height: 40px;
+    background: #f1f1f1;
+}
+#form-factory {
+    background: #FAFAFA;
+    position: absolute;
+    top: 40px;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    display:block;
+}
+#form-frame-left {
+    background: #fff;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 250px;
+    bottom: 0;
+    border-right: solid 1px #e0e0e0;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+.frame-inner-list {
+    padding: 8px 0;
+    width: 100%;
+    height: 100%;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+.frame-inner-list>li>div, li.placeholder {
+	border: solid 1px lightblue; 
+	height: 60px;
+	width : 100%;
+	margin-top : 1px;
+	padding : 1px;
+}
+li.placeholder{
+	background-color : #D6EAF4;
+}
+#form-frame-left .widget-cate {
+    padding: 8px 12px;
+    font-size: 13px;
+}
+#form-frame-left ul {
+    position: relative;
+    overflow: hidden;
+    padding: 0 10px 10px 10px;
+}
+
+.form-edit-widget-label {
+    font-size: 12px;
+    display: block;
+    width: 50%;
+    line-height: 26px;
+    position: relative;
+    float: left;
+    left: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    padding: 2px;
+    color: #515151;
+}
+.form-edit-widget-label a {
+    display: block;
+    cursor: move;
+    background: #f9f9f9;
+    border: dashed 1px #dbdbdb;
+}
+.form-edit-widget-label i {
+    color: #91ADCE;
+    margin-right: 6px;
+    margin-left: 8px;
+    font-size: 14px;
+}
+#form-frame-east {
+    background: #FAFAFA;
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 300px;
+    bottom: 0;
+    border-left: solid 1px #e0e0e0;
+}
+#form-frame-east .property-head {
+    padding: 0 3px;
+    border-bottom: solid 1px #e0e0e0;
+    height: 40px;
+}
+#form-frame-east .property-content {
+    position: absolute;
+    top: 40px;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+#form-frame-center {
+    position: absolute;
+    top: 0;
+    left: 250px;
+    right: 300px;
+    bottom: 0;
+    overflow: auto;
+    padding: 0;
+    background-color:#fff
+}
+
+li.dragged{position:absolute;opacity:.7;filter:alpha(opacity=70);z-index:2000}
+
+.dragging{}
+.formElement{
+	position : relative;
+	border : 1px solid #eee;
+	padding : 0
+}
+</style>
+</head>
+
+<body>
+<div id="header">
+	<div class="nav-left">
+		<div class="form_title_editor" >
+		<a class="nav-home"><i class="icon-angleleft"></i></a>
+		<div class="form_entry_title">
+			<input value="未命名表单" style="width: 98px;"><span class="name-pre">未命名表单</span>
+		</div>
+		</div>
+	</div>
+</div>
+<div id="body">
+	<div class="frame-navibar"></div>
+	<div id="form-factory">
+		<div id="form-frame-left">
+			<div class="frame-inner-list">
+				<div class="widget-cate">基础字段</div>
+				<ul>
+					<li class="form-edit-widget-label" typeId="textbox">
+						<a><i class="icon-widget-text"></i><span>单行文本</span></a>
+					</li>
+					<li class="form-edit-widget-label" typeId="textarea">
+						<a><i class="icon-widget-textarea"></i><span>多行文本</span></a>
+					</li>
+					<li class="form-edit-widget-label" typeId="numeric">
+						<a><i class="icon-widget-number"></i><span>数字</span></a>
+					</li>
+					<li class="form-edit-widget-label" typeId="datetime">
+						<a><i class="icon-widget-datetime"></i><span>日期时间</span></a>
+					</li>
+				</ul>
+			</div>
+		</div>
+		<div id="form-frame-east">
+			<div class="property-head"></div>
+			<div class="property-content"></div>
+		</div>
+		<div id="form-frame-center">
+		<ul class="frame-inner-list">
+		</ul>
+		</div>
+	</div>
+</div>
+</body>
+<script src="js/jquery-1.9.0.js"></script>
+<script src="js/jquery-sortable.js"></script>
+<script type="text/javascript">
+	$(function(){
+		var ul = $("#form-frame-left").find("ul");
+		var d = {};
+		ul.sortable({
+             nested: false,
+             group: "no-drop",
+             pullPlaceholder: false,
+             scroll: true,
+             drop : false,
+             onDragStart: function($item, container, _super, event) {
+            	 var f = $item.offset(),
+                 g = container.rootGroup.pointer;
+	             d = {
+	                 left: g.left - f.left,
+	                 top:  g.top - f.top
+	             }  
+// 	             console.log("onDragStart -- begin");
+// 	             console.log(g);
+// 	             console.log(f);
+// 	             console.log("onDragStart -- end");
+                 $item.clone().insertAfter($item);
+                 $item.width($item.width());
+                 $item.appendTo("body");
+                 _super($item, container);
+                 
+             },
+             onDrag: function($item, position, _super, event) {
+//             	 console.log(position)
+                 if($item.hasClass("form-edit-widget-label")){
+                	 position.left -= d.left;
+                	 position.top -= d.top;
+                	 _super($item, position);
+                 }
+             },
+             onDrop: function($item, container, d, e) {
+                 if ($item.hasClass("form-edit-widget-label")) {
+                	 var typeId = $item.attr("typeId");
+                	 var itemPos = {left : parseFloat($item.css("left").split("px")[0]), top : parseFloat($item.css("top").split("px")[0])};
+                	 console.log(itemPos);
+                	 $item.remove();
+                	 if(container){
+                		 var el = container.el;
+                		 var handle = container.handle;
+                		 var $newRow = "<" + handle + ">";
+                		 $newRow += "<div class=''></div>";
+                		 $newRow += "</" + handle + ">";
+                		 el.append($newRow);
+                		 var container = el.find(">li:last>div");
+                		 formElment = new FormElment(typeId, container);
+         				 var offset = {};
+         				 offset.left = itemPos.left - container.offset().left;
+         				 offset.top = itemPos.top - container.offset().top;
+                		 formElment.initEl(offset);
+                	 }else{
+                		 //添加在行块当中
+                		 console.log("aaaa");
+                	 }
+                 }
+             }
+         });
+		$("#form-frame-center>ul").sortable({group: "no-drop",drag: false});
+		
+		function FormElment(typeId, container){
+			this.typeId = typeId;
+			this.container = container;
+			var _options = {
+				defaultWidth : 100,
+				defaultHeight : 26
+			}
+			this.initEl = function(offset){
+				var htmlEl = "";
+				switch(this.typeId){
+					case "textbox":
+						htmlEl += "<input type='text' class='formElement'/>"
+						break;
+					default:
+						break;
+				}
+				newEl = $(htmlEl);
+				container.append(newEl);
+				newEl.css("left", offset.left + "px");
+				newEl.css("top", offset.top + "px");
+				newEl.width(_options.defaultWidth);
+				newEl.height(_options.defaultHeight);
+				newEl.bind("focus", function(){
+					this.blur()
+				});
+			}
+		}
+	})
+</script>
+</html>
