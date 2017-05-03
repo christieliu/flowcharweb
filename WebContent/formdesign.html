@@ -19,7 +19,17 @@ body{overflow:hidden}
     color: #0DB3A6;
     cursor: pointer;
 }
-
+*{
+	box-sizing:border-box;
+	-moz-box-sizing:border-box; /* Firefox */
+	-webkit-box-sizing:border-box; /* Safari */
+}
+body{
+	-moz-user-select: none;-webkit-user-select: none;
+	-ms-user-select: none;-khtml-user-select: none;
+	user-select: none;
+	/**font-family: "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", 微软雅黑, Arial, sans-serif;**/	
+}
 .form_title_editor {
 	position: relative;
     display: inline-block;
@@ -69,6 +79,12 @@ i.icon-widget-number:before {
 i.icon-widget-datetime:before {
     content: '\e60d';
 }
+i.icon-widget-table:before {
+    content: '\e62a';
+}
+i.icon-widget-dytable:before{
+	content : '\E695'
+}
 li{
 	list-style-type : none;
 }
@@ -115,17 +131,6 @@ li{
     height: 100%;
     overflow-x: hidden;
     overflow-y: auto;
-}
-
-.frame-inner-list>li>div, li.placeholder {
-	border: solid 1px lightblue; 
-	height: 60px;
-	width : 100%;
-	margin-top : 1px;
-	padding : 1px;
-}
-li.placeholder{
-	background-color : #D6EAF4;
 }
 #form-frame-left .widget-cate {
     padding: 8px 12px;
@@ -194,17 +199,187 @@ li.placeholder{
     bottom: 0;
     overflow: auto;
     padding: 0;
-    background-color:#fff
+    background-color:#fff;
+    font-size : 12px
 }
 
-li.dragged{position:absolute;opacity:.7;filter:alpha(opacity=70);z-index:2000}
+.dragged{position:absolute;opacity:.7;filter:alpha(opacity=70);z-index:2000}
+li.placeholder{border:dashed 1px #e0e0e0; height:33px}
 
 .dragging{}
-.formElement{
-	position : relative;
+.container{
+}
+.formelement{
+	position : absolute;
+	cursor : move;
+	border : 1px solid #e0e0e0;
+}
+.tdelement{
+	width : 100%;
+	border : 1px solid #e0e0e0;
+	margin : 0;
+	display : block;
+	overflow : hidden;
+}
+.formelement_label{
+	text-align : center;
+}
+.border1{
 	border : 1px solid #eee;
+}
+.radiogroup, .checkgroup{
+}
+.selected{
+	border : 1px solid lightgreen;
+}
+.inner-right-btn {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 30px;
+    height: 100%;
+    line-height: 28px;
+    border-top: solid 1px transparent;
+    border-bottom: solid 1px transparent;
+    border-left: solid 1px #e0e0e0;
+    display: inline-block;
+    color: #0DB3A6;
+    text-align: center;
+    font-size: 16px;
+}
+.inner_input_box{
+	width : 100%;
+	height :100%;
+	padding : 1px 30px 1px 1px !important;
+	border : 1px solid #eee;
+	margin : 0;
+	outline :0;
+	cursor : move;
+}
+i[class*=icon-] {
+    font-family: finex;
+    font-style: normal;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+	cursor : move;
+}
+i.icon-widget-datetime:before {
+    content: '\e60d';
+}
+.formelementWrapper{
+	position : absolute;
+	cursor : move;
 	padding : 0
 }
+
+.formelementWrapper ul{
+	margin : 2px;
+}
+.formelementWrapper li{
+	padding : 2px;
+	font-size : 14px;
+	color: #515151;
+	display : inline-block
+}
+.formelementWrapper li span{
+	margin-left : 5px
+}
+i.icon-widget-combobox:before {
+    content: '\e613';
+}
+i.icon-ui-combobox:before {
+    content: '\e62c';
+}
+i.icon-widget-radiogroup:before {
+    content: '\e608';
+}
+.radiogroup i:before {
+    content: '\e619';
+}
+i.icon-widget-checkboxgroup:before {
+    content: '\e60a';
+}
+i.icon-widget-label:before{
+    content : '\E614'
+}
+i.icon-widget-opinion:before{
+	content : '\E686'
+}
+.checkgroup i:before {
+    content: '\e603';
+}
+.selectedLabel{
+	background-color : #eee !important;
+}
+.tdInput{
+	width : 100%;
+	height : 100%;
+}
+.tdelement li{
+	padding : 2px;
+	color: #515151;
+	display : inline-block
+}
+/***dyform.css --begin**/
+table{
+	border-collapse:collapse;
+}	
+td{
+	border : 1px solid #000;
+	padding :0px;
+}	
+tr{
+	height : 60px;
+}
+.mainTable{position: absolute;}
+.mainTable table tr:first-child td{
+    border-top-style:none;
+}
+.mainTable table tr td:first-child{
+    border-left-style:none;
+}
+.mainTable table tr:last-child td{
+    border-bottom-style:none;
+}
+.mainTable table tr td:last-child{
+    border-right-style:none;
+}
+.helperline{
+	position : absolute;
+	background-color : #eee;
+	z-index : 1000;
+}
+.tdSelected{
+	background-color : #eee;
+	opacity:0.7;
+	filter:alpha(opacity=70); /* 针对 IE8 以及更早的版本 */
+}
+.dragarea{
+	position : absolute;
+	border : 1px dashed #000;
+	background : #eee;
+	z-index : 1000;
+	opacity:0.7;
+	filter:alpha(opacity=70); /* 针对 IE8 以及更早的版本 */
+}
+.rcMenu{
+	padding : 5px;
+	position : absolute;
+	background-color : #eee;
+	z-index : 1000;
+	display: none;
+	width : 150px;
+}
+ul{
+ list-style:none
+}
+.rcMenu li{
+	cursor : pointer;
+	font-size : 12px;
+	margin-left : 10px;
+	padding : 2px;
+}
+/***dyform.css --end**/
 </style>
 </head>
 
@@ -224,19 +399,43 @@ li.dragged{position:absolute;opacity:.7;filter:alpha(opacity=70);z-index:2000}
 	<div id="form-factory">
 		<div id="form-frame-left">
 			<div class="frame-inner-list">
-				<div class="widget-cate">基础字段</div>
+				<div class="widget-cate">基础组件</div>
 				<ul>
+					<li class="form-edit-widget-label" typeId="label">
+						<a><i class="icon-widget-label"></i><span>标签</span></a>
+					</li>
 					<li class="form-edit-widget-label" typeId="textbox">
 						<a><i class="icon-widget-text"></i><span>单行文本</span></a>
 					</li>
 					<li class="form-edit-widget-label" typeId="textarea">
 						<a><i class="icon-widget-textarea"></i><span>多行文本</span></a>
 					</li>
-					<li class="form-edit-widget-label" typeId="numeric">
+					<li class="form-edit-widget-label" typeId="numberic">
 						<a><i class="icon-widget-number"></i><span>数字</span></a>
 					</li>
 					<li class="form-edit-widget-label" typeId="datetime">
 						<a><i class="icon-widget-datetime"></i><span>日期时间</span></a>
+					</li>
+					<li class="form-edit-widget-label" typeId="combobox">
+						<a><i class="icon-widget-combobox"></i><span>下拉框</span></a>
+					</li>
+					<li class="form-edit-widget-label" typeId="radiogroup">
+						<a><i class="icon-widget-radiogroup"></i><span>单选框组</span></a>
+					</li>
+					<li class="form-edit-widget-label" typeId="checkboxgroup">
+						<a><i class="icon-widget-checkboxgroup"></i><span>复选框组</span></a>
+					</li>
+					<li class="form-edit-widget-label" typeId="table">
+						<a><i class="icon-widget-table"></i><span>表格</span></a>
+					</li>
+				</ul>
+				<div class="widget-cate">高级组件</div>
+				<ul>
+					<li class="form-edit-widget-label" typeId="opinion">
+						<a><i class="icon-widget-opinion"></i><span>签批控件</span></a>
+					</li>
+					<li class="form-edit-widget-label" typeId="dytable">
+						<a><i class="icon-widget-dytable"></i><span>动态表格</span></a>
 					</li>
 				</ul>
 			</div>
@@ -245,105 +444,516 @@ li.dragged{position:absolute;opacity:.7;filter:alpha(opacity=70);z-index:2000}
 			<div class="property-head"></div>
 			<div class="property-content"></div>
 		</div>
-		<div id="form-frame-center">
-		<ul class="frame-inner-list">
-		</ul>
+		<div id="form-frame-center" class="container">
+		
 		</div>
 	</div>
 </div>
 </body>
-<script src="js/jquery-1.9.0.js"></script>
-<script src="js/jquery-sortable.js"></script>
+<script src="js/jquery-1.12.3.min.js"></script>
+<!-- <script src="js/jquery-sortable.js"></script> -->
 <script type="text/javascript">
-	$(function(){
-		var ul = $("#form-frame-left").find("ul");
-		var d = {};
-		ul.sortable({
-             nested: false,
-             group: "no-drop",
-             pullPlaceholder: false,
-             scroll: true,
-             drop : false,
-             onDragStart: function($item, container, _super, event) {
-            	 var f = $item.offset(),
-                 g = container.rootGroup.pointer;
-	             d = {
-	                 left: g.left - f.left,
-	                 top:  g.top - f.top
-	             }  
-// 	             console.log("onDragStart -- begin");
-// 	             console.log(g);
-// 	             console.log(f);
-// 	             console.log("onDragStart -- end");
-                 $item.clone().insertAfter($item);
-                 $item.width($item.width());
-                 $item.appendTo("body");
-                 _super($item, container);
-                 
-             },
-             onDrag: function($item, position, _super, event) {
-//             	 console.log(position)
-                 if($item.hasClass("form-edit-widget-label")){
-                	 position.left -= d.left;
-                	 position.top -= d.top;
-                	 _super($item, position);
-                 }
-             },
-             onDrop: function($item, container, d, e) {
-                 if ($item.hasClass("form-edit-widget-label")) {
-                	 var typeId = $item.attr("typeId");
-                	 var itemPos = {left : parseFloat($item.css("left").split("px")[0]), top : parseFloat($item.css("top").split("px")[0])};
-                	 console.log(itemPos);
-                	 $item.remove();
-                	 if(container){
-                		 var el = container.el;
-                		 var handle = container.handle;
-                		 var $newRow = "<" + handle + ">";
-                		 $newRow += "<div class=''></div>";
-                		 $newRow += "</" + handle + ">";
-                		 el.append($newRow);
-                		 var container = el.find(">li:last>div");
-                		 formElment = new FormElment(typeId, container);
-         				 var offset = {};
-         				 offset.left = itemPos.left - container.offset().left;
-         				 offset.top = itemPos.top - container.offset().top;
-                		 formElment.initEl(offset);
-                	 }else{
-                		 //添加在行块当中
-                		 console.log("aaaa");
-                	 }
-                 }
-             }
-         });
-		$("#form-frame-center>ul").sortable({group: "no-drop",drag: false});
-		
-		function FormElment(typeId, container){
-			this.typeId = typeId;
-			this.container = container;
-			var _options = {
-				defaultWidth : 100,
-				defaultHeight : 26
-			}
-			this.initEl = function(offset){
-				var htmlEl = "";
-				switch(this.typeId){
-					case "textbox":
-						htmlEl += "<input type='text' class='formElement'/>"
-						break;
-					default:
-						break;
-				}
-				newEl = $(htmlEl);
-				container.append(newEl);
-				newEl.css("left", offset.left + "px");
-				newEl.css("top", offset.top + "px");
-				newEl.width(_options.defaultWidth);
-				newEl.height(_options.defaultHeight);
-				newEl.bind("focus", function(){
-					this.blur()
-				});
+
+	//获取元素的位置
+	function getOffset(el){
+		var position = el.css("position");
+		return (position && position.toLowerCase == "absolute") ? 
+				//{left : parseFloat(el.css("left").split("px")[0]), top : parseFloat(el.css("top").split("px")[0])} 
+				el.position()
+				: el.offset();
+	}	
+	//判断是否在容器区域内
+	function isInDropArea(el, container){
+		var c1 = getOffset(el), c2 = getOffset(container);
+		var s1 = {w : el.width(), h : el.height()}, s2 = {w : container.width(), h : container.height()};
+		return (c1.top >= c2.top && c1.top + s1.h <= c2.top + s2.h) && (c1.left >= c2.left && c1.left + s1.w <= c2.left + s2.w);
+	}	
+	!function ( $, window){
+		//可拖拽的表单元素图标
+	    var  eventNames = {
+		    start: "touchstart mousedown",
+		    drop: "touchend touchcancel mouseup",
+		    drag: "touchmove mousemove",
+		    scroll: "scroll"
+		  };
+		var defaultLabelOptions ={
+			draggedClass : "dragged",
+			onDragStart : function($item, _self , event){
+			    $item.css({
+			        height: $item.outerHeight(),
+			        width: $item.outerWidth()
+			    });
+			    $item.addClass(_self.options.draggedClass);
+			},
+		    onDrag: function ($item, position, _super, event) {
+		        $item.css(position);
+		    },
+		    onDrop: function ($item, container, event) {
+		    	$item.remove();
+		    }
+		};
+		function getRelativePosition(pointer, lastPointer, element) {
+			var offset = element.position();
+			return {
+			    left: offset.left + pointer.left - lastPointer.left,
+			    top: offset.top + pointer.top - lastPointer.top
 			}
 		}
+
+		//判断是否开始拖拽
+		function isValidDrag(e) {
+		    return e.which == 1 ||
+		        e.type == "touchstart" && e.originalEvent.touches.length == 1
+		}
+		//获取鼠标的位置
+	    function getPointer(e) {
+	         var o = e.originalEvent || e.originalEvent.touches && e.originalEvent.touches[0];
+	         return {
+	             left: e.pageX || o.pageX,
+	             top: e.pageY || o.pageY
+	         }
+	    }	
+	    //左边可拖拽的标签图标
+		function DragableLabel(element, container, options) {
+		    this.el = element;
+		    this.container = container;
+		    this.options = $.extend( {}, defaultLabelOptions, options);
+		    this.dragProxy = $.proxy(this.drag, this);
+		    this.dropProxy = $.proxy(this.drop, this);
+		    this.el.on(eventNames.start, $.proxy(this.dragInit, this));
+		}
+		DragableLabel.prototype = {
+			dragInit: function(e) {
+				this.$document = $(this.el[0].ownerDocument)
+		        if( !this.disabled && this.isValidDrag(e)) {
+		        	this.setPointer(e);
+		        	this.toggleListeners("on");
+		        }
+		    },
+		    isValidDrag: function(e) {
+		      return e.which == 1 ||
+		        e.type == "touchstart" && e.originalEvent.touches.length == 1
+		    },	
+		    toggleListeners: function(method){
+		        var that = this,
+		        events = ['drag','drop']
+		        $.each(events,function  (i,event) {
+		            that.$document[method](eventNames[event], that[event + "Proxy"])
+		        })		    	
+		    },
+		    drag : function(e){
+		    	if(!this.dragging){
+		    		//this.options.onDragStart(this.el, this, defaultLabelOptions.onDragStart, e);
+		    		var offset = this.el.offset();
+		    		this.itemProxy = this.el.clone();
+		    		this.itemProxy.width(this.el.width());
+		    		this.itemProxy.appendTo("body");
+		    		this.itemProxy.css(offset);
+	                defaultLabelOptions.onDragStart(this.itemProxy,  this , event);
+		    		this.dragging = true;
+		    	}
+		    	this.setPointer(e);
+		        this.options.onDrag(this.itemProxy,
+                        getRelativePosition(this.pointer, this.lastPointer, this.itemProxy),
+                        this.options.onDrag,
+                        e)
+		    },
+		    drop : function(e){
+		    	this.toggleListeners("off");
+		    	if(this.dragging){
+		    		this.options.onDrop ? this.options.onDrop(this.itemProxy, this.container, e) : "";
+				    defaultLabelOptions.onDrop(this.itemProxy, e)
+					this.dragging = false;
+				    this.itemProxy = null;
+		    	}
+		    }, 
+		    setPointer: function (e) {
+		    	var pointer = this.getPointer(e);
+		        this.lastPointer = this.pointer;
+		        this.pointer = pointer;
+		    },
+		    getPointer: function(e) {
+		        var o = e.originalEvent || e.originalEvent.touches && e.originalEvent.touches[0];
+		        return {
+		          left: e.pageX || o.pageX,
+		          top: e.pageY || o.pageY
+		        }
+		    }	    
+	    }
+		//表单控件开始
+		var _defaultElementOptions = {
+			width : 130,
+			height : 30,
+			position : {left : 0, top : 0},
+			tolerance : 2,
+			minHeight : 12,
+			minWidth : 20
+		}
+		var fromContainerGroup = {};
+		
+		function FormElement(typeId, options){
+			this.typeId = typeId;
+			this.options = $.extend( {}, _defaultElementOptions, options);
+			this.contarnerObj = fromContainerGroup[this.options.groupId];
+			this.container = this.contarnerObj.container;
+			this.init();
+		}
+		FormElement.prototype = {
+			init : function(){
+				switch(this.typeId){
+				 	case "label":
+	       				var elHtml  = "<span class='formelement formelement_label' >标签</span>";
+		   				var $newEl = $(elHtml);
+		   				this.container.append($newEl);
+		   				$newEl.css("left" , this.options.position.left + "px");
+		   				$newEl.css("top" , this.options.position.top + "px");
+		   				$newEl.css("width",  "80px");
+		   				$newEl.css("height", this.options.height + "px");
+		   				this.el = $newEl;
+		   				break;
+        			case "textbox":
+        			case "numberic":
+        				 var elHtml  = "<input type='text' class='formelement'/>";
+        				 var $newEl = $(elHtml);
+        				 this.container.append($newEl);
+        				 $newEl.css("left" , this.options.position.left + "px");
+        				 $newEl.css("top" , this.options.position.top + "px");
+        				 $newEl.css("width", this.options.width + "px");
+        				 $newEl.css("height", this.options.height + "px");
+        				 this.el = $newEl;
+        				 break;
+       				 case "textarea":
+           				 var elHtml  = "<textarea  class='formelement'/></textarea>";
+           				 var $newEl = $(elHtml);
+           				 this.container.append($newEl);
+           				 $newEl.css("left" , this.options.position.left + "px");
+           				 $newEl.css("top" , this.options.position.top + "px");
+           				 $newEl.css("width",  "150px");
+           				 $newEl.css("height", "80px");
+           				 this.el = $newEl;
+           				 break;
+       				 case "datetime":
+        				 var elHtml  = "<div class='formelementWrapper'><input type='text' class='inner_input_box' readonly='readonly'/>";
+        				 elHtml += "<i class='inner-right-btn icon-widget-datetime'></i>";
+        				 elHtml += "</div>";
+        				 var $newEl = $(elHtml);
+        				 this.container.append($newEl);
+        				 $newEl.css("left" , this.options.position.left + "px");
+        				 $newEl.css("top" , this.options.position.top + "px");
+        				 $newEl.css("width", this.options.width + "px");
+        				 $newEl.css("height", this.options.height + "px");
+        				 this.el = $newEl;
+        				 break;
+       				 case "combobox":
+        				 var elHtml  = "<div class='formelementWrapper'><input type='text' class='inner_input_box' readonly='readonly'/>";
+        				 elHtml += "<i class='inner-right-btn icon-ui-combobox'></i>";
+        				 elHtml += "</div>";
+        				 var $newEl = $(elHtml);
+        				 this.container.append($newEl);
+        				 $newEl.css("left" , this.options.position.left + "px");
+        				 $newEl.css("top" , this.options.position.top + "px");
+        				 $newEl.css("width", this.options.width + "px");
+        				 $newEl.css("height", this.options.height + "px");
+        				 this.el = $newEl;
+        				 break;
+       				 case "radiogroup" :
+        				 var elHtml  = "<div class='formelementWrapper border1 radiogroup'>";
+        				 elHtml += "<ul><li><i class='icon-blank'></i><span>选项1</span></li><li><i  class='icon-blank'></i><span>选项2</span></li></ul>";
+        				 elHtml += "</div>";
+        				 var $newEl = $(elHtml);
+        				 this.container.append($newEl);
+        				 $newEl.css("left" , this.options.position.left + "px");
+        				 $newEl.css("top" , this.options.position.top + "px");
+        				 $newEl.css("width", this.options.width + "px");
+        				 $newEl.css("height", this.options.height + "px");
+        				 this.el = $newEl;
+       					 break;
+       				 case "checkboxgroup":
+        				 var elHtml  = "<div class='formelementWrapper border1 checkgroup'>";
+        				 elHtml += "<ul><li><i class='icon-blank'></i><span>选项1</span></li><li><i class='icon-blank'></i><span>选项2</span></li><li><i class='icon-blank'></i><span>选项3</span></li></ul>";
+        				 elHtml += "</div>";
+        				 var $newEl = $(elHtml);
+        				 this.container.append($newEl);
+        				 $newEl.css("left" , this.options.position.left + "px");
+        				 $newEl.css("top" , this.options.position.top + "px");
+        				 $newEl.css("width","190px");
+        				 $newEl.css("height", this.options.height + "px");
+        				 this.el = $newEl;
+       					 break;
+       				 case "table":
+       					 var elHtml = "<table class='mainTable'><tbody>";
+       					 for(var i = 0 ; i < 4; i++){
+       						 elHtml += "<tr>";
+       						 for(var j = 0 ; j < 4 ; j++){
+       							elHtml += "<td style='width:60px'>&nbsp;</td>";
+       						 }
+           					 elHtml += "</tr>"
+       					 }
+       					 elHtml += "</tbody></table>"
+       					 var $newEl = $(elHtml);
+        				 this.container.append($newEl);
+        				 $newEl.css("left" , this.options.position.left + "px");
+        				 $newEl.css("top" , this.options.position.top + "px");
+        				 $newEl.CommonTable({group : "formdesign"});
+        				 this.el = $newEl;
+       					 return;
+        			 default :break;
+				 }
+				 if(!this.el)return;
+				 (this.el.is("input") || this.el.is("textarea") ? this.el : this.el.find(":text")).focus(function(){
+					 this.blur();
+				 })
+				 this.el.on("mousemove", $.proxy(this.onMove, this));
+				 this.el.on("mousedown", $.proxy(this.onDown, this));
+				 this.el.on("mouseup", $.proxy(this.onUp, this));
+				 this.el.on("mouseout", $.proxy(this.onOut, this));
+			},
+			onDown : function(e){
+				this.dragging = true;
+				this.contarnerObj.setTarget(this, this.operator );
+			},
+			onUp : function(e){
+				this.dragging = false;
+				this.operator = undefined;
+			},
+			onMove : function(e){
+				if(this.dragging){
+					return;
+				}
+				var curTarget= $(e.srcElement || e.target);
+				var point = getPointer(e);
+				var position = getOffset(this.el);
+				var elSize = {w : this.el.width(), h : this.el.height()};
+				var toRight = position.left + elSize.w - point.left <= this.options.tolerance,
+					toBottom = position.top + elSize.h - point.top <= this.options.tolerance;
+				if(toRight && toBottom){
+					this.operator = "se-resize";
+					curTarget.css("cursor", "se-resize");
+				}else if(toRight){
+					this.operator = "e-resize";
+					curTarget.css("cursor", "e-resize");
+				}else if(toBottom){
+					this.operator = "s-resize";
+					curTarget.css("cursor", "s-resize");
+					point = getPointer(e);
+				}else{
+					this.operator = "move";
+					curTarget.css("cursor", "move");
+				}
+			},
+			onOut : function(e){
+				
+			}
+		}
+		//表单控件结束
+		//表单容器开始
+		function FormContainer(container, options){
+			this.options = $.extend({}, options);
+			this.container = container;
+			this.selectedObjs = [];
+			fromContainerGroup[this.options.groupId] = this;
+			this._init();
+		}
+		FormContainer.prototype = {
+			_init : function(){
+				this.container.on("mousedown", $.proxy(this.onDown, this));
+				this.container.on("mousemove", $.proxy(this.onMove, this));
+				this.container.on("mouseup", $.proxy(this.onUp, this));
+			},
+			setTarget : function(elTarget, operator){
+				this.target = elTarget;
+				this.operator = operator;
+			},
+			//空间改变高度;
+			changeVerticality : function(el){
+				//鼠标要维持在底部
+				var $this = el;
+				var outH = $this.outerHeight();
+				var dy1 = this.pointer.top - this.lastPointer.top;
+				var dy2 = this.deltaSize.top + outH - this.pointer.top;
+				if((outH + dy1 >= this.target.options.minHeight && this.pointer.top >= this.deltaSize.top)){
+					if($this.data("minH")){
+						if(dy2 <= this.deltaSize.dy ){
+							$this.outerHeight(outH +  this.deltaSize.dy - dy2);
+							//console.log("aaaaaa:" + (this.deltaSize.dy - dy2))
+							$this.removeData("minH");
+						}
+					}else{
+						$this.outerHeight(outH +  dy1);
+					}
+		        	//console.log("bbb" + this.deltaSize.dy + ", h:" + $this.outerHeight());
+				}else if(!$this.data("minH")){
+					$this.data("minH", true);
+					$this.outerHeight(this.target.options.minHeight);
+				}				
+			},
+			changeHorizontality : function(el){
+				//鼠标要维持在右边
+				var $this = el , outW = $this.outerWidth();
+				var dx1 = this.pointer.left - this.lastPointer.left;
+				var dx2 = this.deltaSize.left + outW - this.pointer.left;
+				if((outW + dx1 >= this.target.options.minWidth && this.pointer.left >= this.deltaSize.left)){
+					if($this.data("minW")){
+						if(dx2 <= this.deltaSize.dx ){
+							$this.outerWidth(outW +  this.deltaSize.dx - dx2);
+							$this.removeData("minW");
+						}
+					}else{
+						$this.outerWidth(outW +  dx1);
+					}
+				}else if(!$this.data("minW")){
+					$this.data("minW", true);
+					$this.outerWidth(this.target.options.minWidht);
+				}				
+			},
+			onDown : function(e){
+		        if( isValidDrag(e) && this.target) {
+					this.dragging = true;
+		        	this.setPointer(e);
+					var position = getOffset(this.target.el);
+		        	this.deltaSize = {
+		        		top : position.top, 
+			        	left : position.left, 
+			        	dx : this.target.el.outerWidth() - this.pointer.left + position.left, 
+			        	dy : this.target.el.outerHeight() - this.pointer.top + position.top};
+		        }
+			},
+			onMove : function(e){
+				if(!this.dragging){
+					return;
+				}
+				this.setPointer(e);
+				var that = this;
+				$(this.target.el).each(function(){
+					var $this = $(this);
+					if(that.operator == "se-resize"){
+						that.changeVerticality($this)
+						that.changeHorizontality($this)
+					}else if(that.operator == "s-resize"){
+						that.changeVerticality($this)
+					}else if(that.operator == "e-resize"){
+						that.changeHorizontality($this)
+					}else if(that.operator == "move"){
+						var position = $this.position();
+						$this.css("left" , position.left + that.pointer.left - that.lastPointer.left + "px");
+						$this.css("top" , position.top + that.pointer.top - that.lastPointer.top + "px");
+					}
+					that.container.css("cursor", that.operator);
+				})
+			},
+			onUp : function(e){
+				if(this.dragging){
+					this.dragging = false;
+					if(this.target){
+						this.target.onUp(e);
+					}
+					this.target = undefined;
+					this.operator = undefined;
+					this.deltaSize = undefined;
+					this.container.css("cursor", "default");
+				}
+			},			
+		    setPointer: function (e) {
+		    	var pointer = this.getPointer(e);
+		        this.lastPointer = this.pointer;
+		        this.pointer = pointer;
+		    },
+		    getPointer: function(e) {
+		         var o = e.originalEvent || e.originalEvent.touches && e.originalEvent.touches[0];
+		         return {
+		             left: e.pageX || o.pageX,
+		             top: e.pageY || o.pageY
+		         }
+		    }
+		}
+    	//自定义插件--容器
+    	$.fn["FormContainer"] = function(methodOrOptions){
+    		return this.map(function(){
+    			var $this = $(this),
+    			$data = $this.data("FormContainer");
+    			if(!$data)
+    			    $this.data("fc", new FormContainer($this, methodOrOptions))
+    			return this;
+    		})
+		}			
+    	//自定义插件--容器
+    	$.fn["DragableLabel"] = function(container, methodOrOptions){
+    		return this.map(function(){
+    			var $this = $(this),
+    			$data = $this.data("DragableLabel");
+    			if(!$data)
+    			    $this.data("DragableLabel", new DragableLabel($this, container,  methodOrOptions))
+    			return this;
+    		})
+		}
+    	$.extend({ 
+    		FormElement :function(typeId , methodOrOptions){
+    		    return	new FormElement(typeId, methodOrOptions)
+			}
+//     		,TdElement :function(typeId, container, methodOrOptions){
+//     		    return	new TdElement(typeId, container, methodOrOptions)
+// 			}
+    	});
+    	
+		//表单容器结束
+	}(jQuery, window)
+		
+	$(function(){
+		var ul = $("#form-frame-left").find("ul");
+		var container = $("div.container");
+		var groupId = "formdesign";
+		fc = container.FormContainer({groupId : groupId});
+		var options = {
+			 container : container,
+             onDrop: function($item, c, e) {
+                 if ($item.hasClass("form-edit-widget-label")) {
+                	 var typeId = $item.attr("typeId");
+              		 var divOffset = getOffset(c), position = getOffset($item);
+                	 if(isInDropArea($item, c)){
+                		 $.FormElement($item.attr("typeId"),  
+                  			{
+                			 	position :{left : position.left - divOffset.left, top : position.top - divOffset.top},
+                  				groupId : groupId
+                  		 	}
+                		 );
+                	 }	
+                 }
+             }
+		}
+		ul.find("li").each(function(){
+			var $this = $(this), $a = $this.find("a") ;
+			$this.DragableLabel(container, options);
+			$this.click(function(){
+				var flag = $a.hasClass("selectedLabel");
+				if(flag){
+					$a.removeClass("selectedLabel")
+				}else{
+					ul.find(".selectedLabel").removeClass("selectedLabel")
+					$a.addClass("selectedLabel")
+				}
+			})
+		});
+
+	    //加载dyform.js
+
+		$.ajax({
+			url : "js/dyform.js",
+			cache : false,
+			dataType : "script",
+			async : false,
+			success : function() {
+				container.TableContainer({
+					group : groupId,
+					drop : true,
+					getCurTypeId : function() {
+						return ul.find("a.selectedLabel").parent().attr("typeId");
+						//return "label"
+					}
+				})
+			}
+		});
+		//$("#form-frame-center>ul").sortable({group: "no-drop",drag: false})
+		//$("body")["on"]("mousedown.1", function(){console.log("aaaa")})
 	})
 </script>
 </html>
