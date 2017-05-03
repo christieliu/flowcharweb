@@ -311,7 +311,7 @@
     				$td.attr("rowspan", rows);
     				$td.removeClass("tdSelected");
     				$td.find("div.tdelement").each(function(){
-    					var $this = $(this);
+    					var $this = $(this); 
     					$this.outerHeight($this.closest("td").height() + 1);
     				})
     			}else{
