@@ -285,11 +285,13 @@
     		//console.log(tdCount);
     		//console.log(minCol + ":" + maxCol + ":" + minRow + ":" + maxRow);
     		var tdFirst = tds.first(), tdLast = tds.last();
-    		var cols = 0,$td, rows = 0, $tmpTr;
+    		var cols = 0,$td, rows = 0, $tmpTr, newWidth = 0;
     		cols += tdFirst.attr("colspan") ? parseInt(tdFirst.attr("colspan")) : 1;
+    		newWidth += tdFirst.outerWidth();
     		$td = tdFirst.next();
     		while($td.size() && $td.hasClass("tdSelected")){
     			cols += $td.attr("colspan") ? parseInt($td.attr("colspan")) : 1;
+    			newWidth += $td.outerWidth();
     			$td = $td.next();
     		}
     		rows += tdFirst.attr("rowspan") ? parseInt(tdFirst.attr("rowspan")) : 1;
@@ -310,6 +312,7 @@
     				$td.attr("colspan", cols);
     				$td.attr("rowspan", rows);
     				$td.removeClass("tdSelected");
+    				$td.outerWidth(newWidth);
     				$td.find("div.tdelement").each(function(){
     					var $this = $(this); 
     					$this.outerHeight($this.closest("td").height() + 1);
@@ -386,7 +389,7 @@
 			if(elHtml){
    				var $newEl = $(elHtml);
    				//无法通过css:height%来限制高度
-   				$newEl.outerHeight(this.td.height() + 1);
+   				$newEl.outerHeight(this.td.outerHeight());
    				this.td.empty();
    				this.td.append($newEl);
    				this.el = $newEl;
