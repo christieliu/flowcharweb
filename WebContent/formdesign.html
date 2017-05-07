@@ -8,376 +8,623 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <style type="text/css">
-@font-face{font-family:finex;src:url(https://assets.jiandaoyun.com/v1291/resources/font/iconfont.eot);src:url(https://assets.jiandaoyun.com/v1291/resources/font/iconfont.eot?#iefix) format('embedded-opentype'),url(https://assets.jiandaoyun.com/v1291/resources/font/iconfont.woff) format('woff'),url(https://assets.jiandaoyun.com/v1291/resources/font/iconfont.ttf) format('truetype'),url(https://assets.jiandaoyun.com/v1291/resources/font/iconfont.svg#svgFontName) format('svg')}
-html, body{padding:0;margin:0}
-body{overflow:hidden}
-#header{position:relative;width:100%;height:60px;background:rgba(255,255,255,0.8);border-bottom:solid 1px #e0e0e0}
-#header .nav-left{position:absolute;top:0;right:290px;bottom:0;left:10px;line-height:60px}
-#header .nav-right{display:none;position:absolute;top:0;right:20px;bottom:0;line-height:60px}
+@font-face {
+	font-family: finex;
+	src:
+		url(https://assets.jiandaoyun.com/v1291/resources/font/iconfont.eot);
+	src:
+		url(https://assets.jiandaoyun.com/v1291/resources/font/iconfont.eot?#iefix)
+		format('embedded-opentype'),
+		url(https://assets.jiandaoyun.com/v1291/resources/font/iconfont.woff)
+		format('woff'),
+		url(https://assets.jiandaoyun.com/v1291/resources/font/iconfont.ttf)
+		format('truetype'),
+		url(https://assets.jiandaoyun.com/v1291/resources/font/iconfont.svg#svgFontName)
+		format('svg')
+}
+
+html, body {
+	padding: 0;
+	margin: 0
+}
+
+body {
+	overflow: hidden
+}
+
+#header {
+	position: relative;
+	width: 100%;
+	height: 60px;
+	background: rgba(255, 255, 255, 0.8);
+	border-bottom: solid 1px #e0e0e0
+}
+
+#header .nav-left {
+	position: absolute;
+	top: 0;
+	right: 290px;
+	bottom: 0;
+	left: 10px;
+	line-height: 60px
+}
+
+#header .nav-right {
+	display: none;
+	position: absolute;
+	top: 0;
+	right: 20px;
+	bottom: 0;
+	line-height: 60px
+}
+
 #header .nav-home {
-    font-size: 40px;
-    color: #0DB3A6;
-    cursor: pointer;
+	font-size: 40px;
+	color: #0DB3A6;
+	cursor: pointer;
 }
-*{
-	box-sizing:border-box;
-	-moz-box-sizing:border-box; /* Firefox */
-	-webkit-box-sizing:border-box; /* Safari */
+
+* {
+	box-sizing: border-box;
+	-moz-box-sizing: border-box; /* Firefox */
+	-webkit-box-sizing: border-box; /* Safari */
 }
-body{
-	-moz-user-select: none;-webkit-user-select: none;
-	-ms-user-select: none;-khtml-user-select: none;
+
+body {
+	-moz-user-select: none;
+	-webkit-user-select: none;
+	-ms-user-select: none;
+	-khtml-user-select: none;
 	user-select: none;
-	/**font-family: "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", 微软雅黑, Arial, sans-serif;**/	
+	font-size : 14px;
+	/**font-family: "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", 微软雅黑, Arial, sans-serif;**/
 }
+
 .form_title_editor {
 	position: relative;
-    display: inline-block;
-    max-width: 100%;
-    padding: 0 40px 0 50px;
+	display: inline-block;
+	max-width: 100%;
+	padding: 0 40px 0 50px;
 }
+
 .form_title_editor .nav-home {
-    position: absolute;
-    top: 0;
-    left: 0;
-    bottom: 0;
+	position: absolute;
+	top: 0;
+	left: 0;
+	bottom: 0;
 }
+
 .form_entry_title {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    font-size: 18px;
-    max-width: 300px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	font-size: 18px;
+	max-width: 300px;
 }
+
 a {
-    outline: 0;
-    text-decoration: none;
+	outline: 0;
+	text-decoration: none;
 }
-ol, ul{
-	padding:0;
-	margin:0
+
+ol, ul {
+	padding: 0;
+	margin: 0
 }
+
 i[class*=icon-] {
-    font-family: finex;
-    font-style: normal;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
+	font-family: finex;
+	font-style: normal;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
 }
 
 i.icon-angleleft:before {
-    content: "\e632";
+	content: "\e632";
 }
+
 i.icon-widget-text:before {
-    content: '\e60f';
+	content: '\e60f';
 }
+
 i.icon-widget-textarea:before {
-    content: '\e60b';
+	content: '\e60b';
 }
+
 i.icon-widget-number:before {
-    content: '\e60e';
+	content: '\e60e';
 }
+
 i.icon-widget-datetime:before {
-    content: '\e60d';
+	content: '\e60d';
 }
+
 i.icon-widget-table:before {
-    content: '\e62a';
+	content: '\e62a';
 }
-i.icon-widget-dytable:before{
-	content : '\E695'
+
+i.icon-widget-dytable:before {
+	content: '\E695'
 }
-li{
-	list-style-type : none;
+
+li {
+	list-style-type: none;
 }
+
 * {
-    -webkit-box-sizing: border-box;
-    -moz-box-sizing: border-box;
-    box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
 }
+
 #body {
-    position: absolute;
-    top: 60px;
-    left: 0;
-    right: 0;
-    bottom: 0;
+	position: absolute;
+	top: 60px;
+	left: 0;
+	right: 0;
+	bottom: 0;
 }
+
 #body .frame-navibar {
-    position: relative;
-    height: 40px;
-    background: #f1f1f1;
+	position: relative;
+	height: 40px;
+	background: #f1f1f1;
 }
+
 #form-factory {
-    background: #FAFAFA;
-    position: absolute;
-    top: 40px;
-    left: 0;
-    bottom: 0;
-    right: 0;
-    display:block;
+	background: #FAFAFA;
+	position: absolute;
+	top: 40px;
+	left: 0;
+	bottom: 0;
+	right: 0;
+	display: block;
 }
+
 #form-frame-left {
-    background: #fff;
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 250px;
-    bottom: 0;
-    border-right: solid 1px #e0e0e0;
-    overflow-x: hidden;
-    overflow-y: auto;
+	background: #fff;
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 250px;
+	bottom: 0;
+	border-right: solid 1px #e0e0e0;
+	overflow-x: hidden;
+	overflow-y: auto;
 }
+
 .frame-inner-list {
-    padding: 8px 0;
-    width: 100%;
-    height: 100%;
-    overflow-x: hidden;
-    overflow-y: auto;
+	padding: 8px 0;
+	width: 100%;
+	height: 100%;
+	overflow-x: hidden;
+	overflow-y: auto;
 }
+
 #form-frame-left .widget-cate {
-    padding: 8px 12px;
-    font-size: 13px;
+	padding: 8px 12px;
+	font-size: 13px;
 }
+
 #form-frame-left ul {
-    position: relative;
-    overflow: hidden;
-    padding: 0 10px 10px 10px;
+	position: relative;
+	overflow: hidden;
+	padding: 0 10px 10px 10px;
 }
 
 .form-edit-widget-label {
-    font-size: 12px;
-    display: block;
-    width: 50%;
-    line-height: 26px;
+	font-size: 12px;
+	display: block;
+	width: 50%;
+	line-height: 26px;
+	position: relative;
+	float: left;
+	left: 0;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	padding: 2px;
+	color: #515151;
+}
+
+.form-edit-widget-label a {
+	display: block;
+	cursor: move;
+	background: #f9f9f9;
+	border: dashed 1px #dbdbdb;
+}
+
+.form-edit-widget-label i {
+	color: #91ADCE;
+	margin-right: 6px;
+	margin-left: 8px;
+	font-size: 14px;
+}
+
+#form-frame-east {
+	background: #FAFAFA;
+	position: absolute;
+	top: 0;
+	right: 0;
+	width: 300px;
+	bottom: 0;
+	border-left: solid 1px #e0e0e0;
+}
+
+#form-frame-east .property-head {
+	padding: 0 3px;
+	border-bottom: solid 1px #e0e0e0;
+	height: 40px;
+}
+
+#form-frame-east .property-content {
+	position: absolute;
+	top: 40px;
+	left: 0;
+	bottom: 0;
+	right: 0;
+	overflow-x: hidden;
+	overflow-y: auto;
+}
+
+#form-frame-center {
+	position: absolute;
+	top: 0;
+	left: 250px;
+	right: 300px;
+	bottom: 0;
+	overflow: auto;
+	padding: 0;
+	background-color: #fff;
+	font-size: 12px
+}
+
+.dragged {
+	position: absolute;
+	opacity: .7;
+	filter: alpha(opacity = 70);
+	z-index: 2000
+}
+
+li.placeholder {
+	border: dashed 1px #e0e0e0;
+	height: 33px
+}
+
+.dragging {
+	
+}
+
+.container {
+	outline : 0;
+}
+
+.formelement {
+	position: absolute;
+	cursor: move;
+	border: 1px solid #e0e0e0;
+}
+
+.tdelement {
+	width: 100%;
+	border: 1px solid #e0e0e0;
+	margin: 0;
+	display: block;
+	overflow: hidden;
+}
+
+.formelement_label {
+	text-align: center;
+}
+
+.border1 {
+	border: 1px solid #eee;
+}
+
+.radiogroup, .checkgroup {
+	
+}
+
+.selected {
+	border: 1px solid lightgreen;
+}
+
+.inner-right-btn {
+	position: absolute;
+	top: 0;
+	right: 0;
+	width: 30px;
+	height: 100%;
+	line-height: 28px;
+	border-top: solid 1px transparent;
+	border-bottom: solid 1px transparent;
+	border-left: solid 1px #e0e0e0;
+	display: inline-block;
+	color: #0DB3A6;
+	text-align: center;
+	font-size: 16px;
+}
+
+.inner_input_box {
+	width: 100%;
+	height: 100%;
+	padding: 1px 30px 1px 1px !important;
+	border: 1px solid #eee;
+	margin: 0;
+	outline: 0;
+	cursor: move;
+}
+
+i[class*=icon-] {
+	font-family: finex;
+	font-style: normal;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	cursor: move;
+}
+
+i.icon-widget-datetime:before {
+	content: '\e60d';
+}
+
+.formelementWrapper {
+	position: absolute;
+	cursor: move;
+	padding: 0
+}
+
+.formelementWrapper ul {
+	margin: 2px;
+}
+
+.formelementWrapper li {
+	padding: 2px;
+	font-size: 14px;
+	color: #515151;
+	display: inline-block
+}
+
+.formelementWrapper li span {
+	margin-left: 5px
+}
+
+i.icon-widget-combobox:before {
+	content: '\e613';
+}
+
+i.icon-ui-combobox:before {
+	content: '\e62c';
+}
+
+i.icon-widget-radiogroup:before {
+	content: '\e608';
+}
+
+.radiogroup i:before {
+	content: '\e619';
+}
+
+i.icon-widget-checkboxgroup:before {
+	content: '\e60a';
+}
+
+i.icon-widget-label:before {
+	content: '\E614'
+}
+
+i.icon-widget-opinion:before {
+	content: '\E686'
+}
+
+.checkgroup i:before {
+	content: '\e603';
+}
+
+.selectedLabel {
+	background-color: #eee !important;
+}
+
+.tdInput {
+	width: 100%;
+	height: 100%;
+}
+
+.tdelement li {
+	padding: 2px;
+	color: #515151;
+	display: inline-block
+}
+
+.property-head .formtab {
     position: relative;
     float: left;
     left: 0;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    padding: 2px;
-    color: #515151;
-}
-.form-edit-widget-label a {
-    display: block;
-    cursor: move;
-    background: #f9f9f9;
-    border: dashed 1px #dbdbdb;
-}
-.form-edit-widget-label i {
-    color: #91ADCE;
-    margin-right: 6px;
-    margin-left: 8px;
-    font-size: 14px;
-}
-#form-frame-east {
-    background: #FAFAFA;
-    position: absolute;
-    top: 0;
-    right: 0;
-    width: 300px;
-    bottom: 0;
-    border-left: solid 1px #e0e0e0;
-}
-#form-frame-east .property-head {
-    padding: 0 3px;
-    border-bottom: solid 1px #e0e0e0;
+    width: 50%;
     height: 40px;
-}
-#form-frame-east .property-content {
-    position: absolute;
-    top: 40px;
-    left: 0;
-    bottom: 0;
-    right: 0;
-    overflow-x: hidden;
-    overflow-y: auto;
-}
-#form-frame-center {
-    position: absolute;
-    top: 0;
-    left: 250px;
-    right: 300px;
-    bottom: 0;
-    overflow: auto;
-    padding: 0;
-    background-color:#fff;
-    font-size : 12px
-}
-
-.dragged{position:absolute;opacity:.7;filter:alpha(opacity=70);z-index:2000}
-li.placeholder{border:dashed 1px #e0e0e0; height:33px}
-
-.dragging{}
-.container{
-}
-.formelement{
-	position : absolute;
-	cursor : move;
-	border : 1px solid #e0e0e0;
-}
-.tdelement{
-	width : 100%;
-	border : 1px solid #e0e0e0;
-	margin : 0;
-	display : block;
-	overflow : hidden;
-}
-.formelement_label{
-	text-align : center;
-}
-.border1{
-	border : 1px solid #eee;
-}
-.radiogroup, .checkgroup{
-}
-.selected{
-	border : 1px solid lightgreen;
-}
-.inner-right-btn {
-    position: absolute;
-    top: 0;
-    right: 0;
-    width: 30px;
-    height: 100%;
-    line-height: 28px;
-    border-top: solid 1px transparent;
-    border-bottom: solid 1px transparent;
-    border-left: solid 1px #e0e0e0;
-    display: inline-block;
-    color: #0DB3A6;
+    line-height: 40px;
+    border-bottom: solid 3px transparent;
     text-align: center;
-    font-size: 16px;
+    cursor: pointer;
 }
-.inner_input_box{
-	width : 100%;
-	height :100%;
-	padding : 1px 30px 1px 1px !important;
-	border : 1px solid #eee;
-	margin : 0;
-	outline :0;
-	cursor : move;
+.tab_selected{
+	border-bottom-color: #0DB3A6 !important;
 }
-i[class*=icon-] {
-    font-family: finex;
-    font-style: normal;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-	cursor : move;
+.tab_normal{
+	border-bottom-color: transparent;
 }
-i.icon-widget-datetime:before {
-    content: '\e60d';
+#property-content-pane, #form-content-pane {
+	margin : 6px 0px;
 }
-.formelementWrapper{
-	position : absolute;
-	cursor : move;
-	padding : 0
+#form-content-pane{
+	display : none;
 }
-
-.formelementWrapper ul{
-	margin : 2px;
+#property-content-pane .cfg_title, #form-content-pane .cfg_title {
+    position: relative;
+    padding: 0 10px;
+    margin-bottom: 6px;
+    font-weight: 700;
 }
-.formelementWrapper li{
-	padding : 2px;
-	font-size : 14px;
-	color: #515151;
-	display : inline-block
+#property-content-pane .cfg_content, #form-content-pane .cfg_content {
+    position: relative;
+    margin: 0 10px 6px 10px;
 }
-.formelementWrapper li span{
-	margin-left : 5px
+input{
+    margin: 0px;
+    outline: 0px;
+    border-width: 1px;
+    border-style: solid;
 }
-i.icon-widget-combobox:before {
-    content: '\e613';
-}
-i.icon-ui-combobox:before {
-    content: '\e62c';
-}
-i.icon-widget-radiogroup:before {
-    content: '\e608';
-}
-.radiogroup i:before {
-    content: '\e619';
-}
-i.icon-widget-checkboxgroup:before {
-    content: '\e60a';
-}
-i.icon-widget-label:before{
-    content : '\E614'
-}
-i.icon-widget-opinion:before{
-	content : '\E686'
-}
-.checkgroup i:before {
-    content: '\e603';
-}
-.selectedLabel{
-	background-color : #eee !important;
-}
-.tdInput{
+.ctl-input {
 	width : 100%;
 	height : 100%;
+	border-color: rgb(224, 224, 224);
+    border-radius: 2px;
+    background-color: rgb(255, 255, 255);
+    background-image: none;
+    vertical-align: middle;
+    box-shadow: none;
 }
-.tdelement li{
-	padding : 2px;
-	color: #515151;
-	display : inline-block
+.ctl-input:focus{
+	border-color: #0DB3A6 
+}
+
+.selectedEl{
+	border-color : #0DB3A6 !important
 }
 /***dyform.css --begin**/
-table{
-	border-collapse:collapse;
-}	
-td{
-	border : 1px solid #000;
-	padding :0px;
-}	
-tr{
-	height : 60px;
+table {
+	border-collapse: collapse;
 }
-.mainTable{position: absolute;}
-.mainTable table tr:first-child td{
-    border-top-style:none;
+
+td {
+	border: 1px solid #000;
+	padding: 0px;
 }
-.mainTable table tr td:first-child{
-    border-left-style:none;
+
+tr {
+	height: 60px;
 }
-.mainTable table tr:last-child td{
-    border-bottom-style:none;
+
+.mainTable {
+	position: absolute;
 }
-.mainTable table tr td:last-child{
-    border-right-style:none;
+
+.mainTable table tr:first-child td {
+	border-top-style: none;
 }
-.helperline{
-	position : absolute;
-	background-color : #eee;
-	z-index : 1000;
+
+.mainTable table tr td:first-child {
+	border-left-style: none;
 }
-.tdSelected{
-	background-color : #eee;
-	opacity:0.7;
-	filter:alpha(opacity=70); /* 针对 IE8 以及更早的版本 */
+
+.mainTable table tr:last-child td {
+	border-bottom-style: none;
 }
-.dragarea{
-	position : absolute;
-	border : 1px dashed #000;
-	background : #eee;
-	z-index : 1000;
-	opacity:0.7;
-	filter:alpha(opacity=70); /* 针对 IE8 以及更早的版本 */
+
+.mainTable table tr td:last-child {
+	border-right-style: none;
 }
-.rcMenu{
-	padding : 5px;
-	position : absolute;
-	background-color : #eee;
-	z-index : 1000;
+
+.helperline {
+	position: absolute;
+	background-color: #eee;
+	z-index: 1000;
+}
+
+.tdSelected {
+	background-color: #eee;
+	opacity: 0.7;
+	filter: alpha(opacity = 70); /* 针对 IE8 以及更早的版本 */
+}
+
+.dragarea {
+	position: absolute;
+	border: 1px dashed #000;
+	background: #eee;
+	z-index: 1000;
+	opacity: 0.7;
+	filter: alpha(opacity = 70); /* 针对 IE8 以及更早的版本 */
+}
+
+.rcMenu {
+	padding: 5px;
+	position: absolute;
+	background: #fff;
+	z-index: 1000;
 	display: none;
-	width : 150px;
+	width: 180px;
+	min-width: 13em;
+	max-width: 26em;
+	padding: .25em 0;
+	margin: .3em;
+	border: 1px solid #bebebe;
+	border-radius: .2em;
+	-webkit-box-shadow: 0 2px 5px rgba(0, 0, 0, .5);
+	box-shadow: 0 2px 5px rgba(0, 0, 0, .5);
 }
-ul{
- list-style:none
+
+ul {
+	list-style: none
 }
-.rcMenu li{
-	cursor : pointer;
-	font-size : 12px;
-	margin-left : 10px;
-	padding : 2px;
+
+.rcMenu li {
+	cursor: pointer;
+	font-size: 12px;
+	margin-left: 10px;
+	padding: 2px;
+	position: relative;
+	padding: .2em 2em;
+	color: #2f2f2f;
+	background-color: #fff;
+}
+
+.rcMenu-separator {
+	padding: 0;
+	margin: .35em 0;
+	border-bottom: 1px solid #e6e6e6;
+}
+
+.rcMenu li::before {
+	position: absolute;
+	top: 50%;
+	left: 0;
+	width: 2em;
+	font-size: 1em;
+	font-style: normal;
+	font-weight: normal;
+	line-height: 1;
+	color: #2980b9;
+	text-align: center;
+	-webkit-transform: translateY(-50%);
+	-ms-transform: translateY(-50%);
+	-o-transform: translateY(-50%);
+	transform: translateY(-50%);
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+li[class*=rcmenu-icon]{
+	font-family: finex;
+	font-style: normal;
+}
+.rcMenu li:hover::before {
+  color: #fff;
+}
+.rcMenu li:hover {
+  color: #fff;
+  cursor: pointer; 
+  background-color: #2980b9;
+}
+.rcmenu-disabled {
+  color: #bbb;
+  cursor: default; 
+  background-color: #fff;
+}
+.rcmenu-icon-merge::before {
+	content: '\E6CD'
+}
+
+.rcmenu-icon-delete::before {
+	content: '\E624'
 }
 /***dyform.css --end**/
 </style>
@@ -441,10 +688,30 @@ ul{
 			</div>
 		</div>
 		<div id="form-frame-east">
-			<div class="property-head"></div>
-			<div class="property-content"></div>
+			<div class="property-head">
+				<div class="formtab tab_selected" >控件属性</div>
+				<div class="formtab tab_normal" >表单属性</div>
+			</div>
+			<div class="property-content">
+				<div id="property-content-pane">
+					<div class="cfg_title">
+						<span>标题</span>
+					</div>	
+					<div class="cfg_content" style='width : 240px; height : 30px'>
+						<input type="text" class="ctl-input" />
+					</div>
+				</div>
+				<div id="form-content-pane">
+					<div class="cfg_title">
+						<span>标题1</span>
+					</div>	
+					<div class="cfg_content" style='width : 240px; height : 30px'>
+						<input type="text" class="ctl-input" />
+					</div>
+				</div>		
+			</div>
 		</div>
-		<div id="form-frame-center" class="container">
+		<div id="form-frame-center" class="container" tabIndex="0">
 		
 		</div>
 	</div>
@@ -707,12 +974,27 @@ ul{
 				 this.el.on("mousedown", $.proxy(this.onDown, this));
 				 this.el.on("mouseup", $.proxy(this.onUp, this));
 				 this.el.on("mouseout", $.proxy(this.onOut, this)); 
+				 //this.el.on("click", $.proxy(this.onClick, this));
 			},
+		    isValidDrag: function(e) {
+		      return e.which == 1 ||
+		        e.type == "touchstart" && e.originalEvent.touches.length == 1
+		    },
 			onDown : function(e){
+				if(!isValidDrag(e)) return;
 				this.dragging = true;
 				this.contarnerObj.setTarget(this, this.operator );
 			},
 			onUp : function(e){
+				console.log(this.operator)
+				if(!this.operator){
+					this.el.toggleClass("selectedEl");
+					if(e.ctrlKey){
+						
+					}else{
+						this.el.siblings().removeClass("selectedEl")
+					}					
+				}
 				this.dragging = false;
 				this.operator = undefined;
 			},
@@ -743,6 +1025,14 @@ ul{
 			},
 			onOut : function(e){
 				
+			},
+			onClick : function(e){
+				this.el.toggleClass("selectedEl");
+				if(e.ctrlKey){
+					
+				}else{
+					this.el.siblings().removeClass("selectedEl")
+				}
 			}
 		}
 		//表单控件结束
@@ -759,6 +1049,7 @@ ul{
 				this.container.on("mousedown", $.proxy(this.onDown, this));
 				this.container.on("mousemove", $.proxy(this.onMove, this));
 				this.container.on("mouseup", $.proxy(this.onUp, this));
+				this.container.on("keyup", $.proxy(this.onKeyup, this));
 			},
 			setTarget : function(elTarget, operator){
 				this.target = elTarget;
@@ -864,6 +1155,9 @@ ul{
 		             left: e.pageX || o.pageX,
 		             top: e.pageY || o.pageY
 		         }
+		    },
+		    onKeyup : function(e){
+		    	console.log(e.which)
 		    }
 		}
     	//自定义插件--容器
@@ -952,6 +1246,13 @@ ul{
 				})
 			}
 		});
+
+		$(".formtab").click(function(){
+			if(!$(this).hasClass("tab_selected")){
+				$(this).addClass("tab_selected").siblings().removeClass("tab_selected");
+				$(this).parent().next().children(":eq(" + $(this).index() + ")").show().siblings().hide();
+			} 
+		})
 		//$("#form-frame-center>ul").sortable({group: "no-drop",drag: false})
 		//$("body")["on"]("mousedown.1", function(){console.log("aaaa")})
 	})

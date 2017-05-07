@@ -337,7 +337,7 @@
 			helperLineClass : "helperline",
 			dragAreaClass : "dragarea" ,
 			rcMenuClass : "rcMenu",
-			rcMenuoffset : {top : 5, left : 5},
+			rcMenuoffset : {top : 8, left : 8},
 			tolerance_resize : 2,
 			tolerance_move : 5
 		};
@@ -389,7 +389,7 @@
 			if(elHtml){
    				var $newEl = $(elHtml);
    				//无法通过css:height%来限制高度
-   				$newEl.outerHeight(this.td.outerHeight());
+   				$newEl.outerHeight(this.td.height() + 1);
    				this.td.empty();
    				this.td.append($newEl);
    				this.el = $newEl;
@@ -408,6 +408,7 @@
     	this.el.on("mouseout", $.proxy(this.onOut, this));
     	this.el.on("mousedown", $.proxy(this.onDown, this));
     	this.el.on("mouseup", $.proxy(this.onUp, this));
+    	this.el.on("keyup", $.proxy(this.onKeyup, this));
 	}
 	CommonTable.prototype = {
     	onMove : function(e){
@@ -509,7 +510,9 @@
     	},
     	onUp : function(e){
     		this.el.css("cursor", "default");
-    	}
+    	},
+	    onKeyup : function(e){
+	    }
 	}
 	// 普通表格结束
 	
@@ -533,15 +536,16 @@
 	}
 	TableContainer.prototype = {
 		initRcMenu : function(){
-	    	//添加右键菜单
+	    	//添加右键菜单 
 	    	var tableRcMenu = $("#tableRcMenu");
 			if(!tableRcMenu.size()){
 				var tableRcMenu = $("<div class=\"" + this.options.rcMenuClass + "\" id=\"tableRcMenu\">"
 							+"<ul>"
-							+"<li id=\"mergeTd\">合并单元格</li>"
 							+"<li id=\"insertRow\">插入行</li>"
 							+"<li id=\"addColumn\">插入列</li>"
-							+"<li id=\"clearTd\">清除内容</li>"
+							+"<li class='rcMenu-separator'></li>"
+							+"<li id=\"mergeTd\" class=\"rcmenu-icon-merge\">合并单元格</li>"
+							+"<li id=\"clearTd\" class=\"rcmenu-icon-delete\">清除内容</li>"
 							+"</ul>"
 							+"</div>");
 				this.container.append(tableRcMenu);
