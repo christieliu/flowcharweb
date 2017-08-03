@@ -207,9 +207,6 @@
     			})
 			}
 			var changeTds = this.getRelationTds(changeEl_local);
-			$(changeTds).find(">div.tdelement").each(function(){
-				$(this).height($(this).height() + deltaY);
-			})
 			$(this.getRecursiveLastTr(changeEl_local)).each(function(){
 				$(this).height($(this).height() + deltaY);
 			})
@@ -245,10 +242,6 @@
 				})
 			}
 			$(appendHtml).insertBefore($(targetId).parent());
-			$(ajustTds).find("div.tdelement").each(function(){
-				var $this = $(this);
-				$this.outerHeight($this.parent().height() + 1);
-			})
 		}
 		//增加一列
 		this.addColumn = function(targetId, position){
@@ -313,10 +306,6 @@
     				$td.attr("rowspan", rows);
     				$td.removeClass("tdSelected");
     				$td.outerWidth(newWidth);
-    				$td.find("div.tdelement").each(function(){
-    					var $this = $(this); 
-    					$this.outerHeight($this.closest("td").height() + 1);
-    				})
     			}else{
     				$td.remove();
     			}
@@ -388,8 +377,8 @@
 			}
 			if(elHtml){
    				var $newEl = $(elHtml);
-   				//无法通过css:height%来限制高度
-   				$newEl.outerHeight(this.td.height() + 1);
+   				//通过css:height:inherit来限制高度
+   				//$newEl.outerHeight(this.td.height() + 1);
    				this.td.empty();
    				this.td.append($newEl);
    				this.el = $newEl;
